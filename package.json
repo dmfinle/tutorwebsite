@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "concurrently": "^6.2.1"
+  },
+ "scripts": {
+	 "start": "node backend/server",
+	 "client": "npm start --prefix frontend",
+	 "dev": "concurrently \"npm start\" \"npm run client\""
+ }
+}
