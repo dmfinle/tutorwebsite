@@ -152,11 +152,9 @@ exports.loginUser = asyncHandler(async (req, res) => {
 //GET current user and return
 // @access Private
 exports.currentUser = asyncHandler(async (req, res) => {
-  console.log("hello");
   res.json({
     id: req.user.id,
-    firstname: req.user.firstname,
-    lastname: req.user.lastname,
+    fullName: req.user.fullName,
     email: req.user.email,
     isAdmin: req.user.isAdmin,
   });
