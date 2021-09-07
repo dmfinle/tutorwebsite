@@ -1,8 +1,8 @@
-import Component from "react";
-import Button from "@material-ui-core/Button";
-import React from "react";
+import React, { Component } from "react";
+import Button from "@material-ui/core/Button";
 import background from "../../images/Coding.jpg";
-import Link from "react-dom";
+import { Link } from "react-router-dom";
+import "../layout/layout.css";
 
 class CodeBackground extends Component {
   state = {
@@ -28,7 +28,7 @@ class CodeBackground extends Component {
               component={Link}
               to="/login"
             >
-              Click Here
+              Click Here To Login
             </Button>
           </div>
         </div>
