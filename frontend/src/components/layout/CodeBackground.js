@@ -26,9 +26,9 @@ class CodeBackground extends Component {
               align="center"
               className="Button startButton"
               component={Link}
-              to="/login"
+              to="/register"
             >
-              Click Here To Login
+              Click Here To Register
             </Button>
           </div>
         </div>

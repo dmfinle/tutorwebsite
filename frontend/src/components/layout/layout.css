@@ -117,3 +117,16 @@
   background-color: rgb(48, 238, 127) !important;
   margin-top: 10px !important;
 }
+
+.blueAvatar {
+  margin: 10px;
+  color: #ffffff !important;
+  background-color: #ae5e5e !important;
+}
+
+.error {
+  color: #b71234;
+  font-style: italic;
+  font-size: small;
+  font-family: "Roboto", "Helvetica", sans-serif;
+}
