@@ -99,10 +99,13 @@ exports.loginUser = asyncHandler(async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      errors.email = "User not found";
+      //errors.email = "User not found";
+      errors.password = "Incorrect password/email";
       return res.status(404).json(errors);
     }
 
+    //TODO Move in bycrypt function so that only when email and password are correct user can get rejected
+    //that they didn't confirm. Prevent security flaws figuring out emails in database
     if (!user.confirmed) {
       errors.email = "User has not confirmed email address";
       return res.status(404).json(errors);
@@ -127,7 +130,8 @@ exports.loginUser = asyncHandler(async (req, res) => {
           jwt.sign(
             payload,
             keys.secretOrKey,
-            { expiresIn: 3600 },
+            //900 seconds or 15 minutes
+            { expiresIn: 900 },
             (err, token) => {
               if (err) console.error(err);
               res.json({
@@ -137,7 +141,7 @@ exports.loginUser = asyncHandler(async (req, res) => {
             }
           );
         } else {
-          errors.password = "Incorrect password";
+          errors.password = "Incorrect password/email";
           return res.status(404).json(errors);
         }
       })

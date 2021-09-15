@@ -29,8 +29,8 @@ const styles = (theme) => ({
     flexWrap: "wrap",
   },
   textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(),
+    marginRight: theme.spacing(),
     width: 200,
   },
   dense: {
@@ -42,26 +42,26 @@ const styles = (theme) => ({
   main: {
     width: "auto",
     display: "block", // Fix IE 11 issue.
-    marginLeft: theme.spacing.unit * 3,
-    marginRight: theme.spacing.unit * 3,
-    [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3),
+    [theme.breakpoints.up(400 + theme.spacing(6))]: {
       width: 400,
       marginLeft: "auto",
       marginRight: "auto",
     },
   },
   paper: {
-    marginTop: theme.spacing.unit * 8,
+    marginTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${
-      theme.spacing.unit * 3
-    }px`,
+    padding: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(
+      3
+    )}px`,
   },
   form: {
     width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(),
   },
 });
 
@@ -75,13 +75,13 @@ class Register extends Component {
       password: "",
       password2: "",
       openDialog: false,
-      errors: {},
     };
   }
 
   onSubmit = (e) => {
     e.preventDefault();
 
+    //this.props.getErrors(21);
     const { firstname, lastname, email, password, password2 } = this.state;
     const newUser = {
       firstName: firstname,
@@ -91,21 +91,10 @@ class Register extends Component {
       password2: password2,
     };
 
-    this.state.errors = this.props.registerUser(newUser);
+    this.props.registerUser(newUser);
+
     setTimeout(() => this.setState({ openDialog: true }), 1000);
   };
-
-  // static getDerivedStateFromProps(nextProps, prevState) {
-  //   if (nextProps.errors) {
-  //     this.setState({ errors: nextProps.errors });
-  //   }
-  // }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
-    }
-  }
 
   handleDialogClose = () => {
     this.setState({ openDialog: false });
@@ -116,7 +105,7 @@ class Register extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, errors } = this.props;
 
     return (
       <div className={classes.main}>
@@ -129,7 +118,7 @@ class Register extends Component {
           </Typography>
           <form
             className={classes.container}
-            autoComplete="off"
+            autoComplete="on"
             onSubmit={this.onSubmit}
           >
             <FormControl margin="normal" required fullWidth>
@@ -141,11 +130,12 @@ class Register extends Component {
                 autoFocus
               />
             </FormControl>
+            <span className="error">{errors.firstName}</span>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="lastname">Last Name</InputLabel>
               <Input id="lastname" name="lastname" onChange={this.onChange} />
             </FormControl>
-            <span className="error">{this.state.errors.name}</span>
+            <span className="error">{errors.lastName}</span>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="email">Email</InputLabel>
               <Input
@@ -155,7 +145,7 @@ class Register extends Component {
                 onChange={this.onChange}
               />
             </FormControl>
-            <span className="error">{this.state.errors.email}</span>
+            <span className="error">{errors.email}</span>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Password</InputLabel>
               <Input
@@ -171,7 +161,7 @@ class Register extends Component {
                 letters, a number, and a special character
               </FormHelperText>
             </FormControl>
-            <span className="error">{this.state.errors.password}</span>
+            <span className="error">{errors.password}</span>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password2">Confirm Password</InputLabel>
               <Input
@@ -182,7 +172,7 @@ class Register extends Component {
                 onChange={this.onChange}
               />
             </FormControl>
-            <span className="error">{this.state.errors.password2}</span>
+            <span className="error">{errors.password2}</span>
             <Button
               type="submit"
               fullWidth
@@ -194,14 +184,13 @@ class Register extends Component {
             </Button>
           </form>
         </Paper>
-
         <div className="link-container">
           <Link to="/login" className="link reg-link">
             Existing user? Click here to login!
           </Link>
         </div>
 
-        {isEmpty(this.state.errors) ? (
+        {isEmpty(errors) ? (
           <Dialog
             open={this.state.openDialog}
             onClose={this.handleDialogClose}
