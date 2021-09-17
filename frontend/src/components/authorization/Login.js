@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../redux/reducers/authSlice";
 import { Link } from "react-router-dom";
-
+import { Redirect } from "react-router";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
@@ -73,7 +73,7 @@ class Login extends Component {
   };
 
   render() {
-    const { errors, classes } = this.props;
+    const { errors, classes, auth } = this.props;
 
     return (
       <div className={classes.main}>
@@ -122,6 +122,7 @@ class Login extends Component {
             Are you a new user? Click here to register!
           </Link>
         </div>
+        {auth.isAuthenticated ? <Redirect to="/profile" /> : <React.Fragment />}
       </div>
     );
   }

@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "./components/layout/Home";
 import Register from "./components/authorization/Register";
 import Login from "./components/authorization/Login";
+import PrivateRoute from "./components/common/PrivateRoute";
+import NavBar from "./components/layout/NavBar";
 
 //Css
 import "./App.css";
@@ -53,12 +55,14 @@ const App = ({ classes }) => {
     <Router>
       <div className="App">
         <CssBaseline />
+        <NavBar />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           <Switch>
             <Route exact path="/" component={Home} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
+            <PrivateRoute exact path="/profile" />
           </Switch>
         </main>
       </div>
