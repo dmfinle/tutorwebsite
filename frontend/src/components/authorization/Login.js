@@ -122,7 +122,11 @@ class Login extends Component {
             Are you a new user? Click here to register!
           </Link>
         </div>
-        {auth.isAuthenticated ? <Redirect to="/profile" /> : <React.Fragment />}
+        {auth.isAuthenticated ? (
+          <Redirect to="/profile/new" />
+        ) : (
+          <React.Fragment />
+        )}
       </div>
     );
   }

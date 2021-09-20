@@ -8,7 +8,6 @@ const passport = require("passport");
 router.get("/", userController.getUsers);
 
 //get users by id (NOTE: Keep routes with ids below other routes)
-// router.get("/:id", userController.getUserById);
 
 //Post to Register a user /api/users/register
 router.post("/register", userController.registerUser);

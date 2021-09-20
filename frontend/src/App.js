@@ -7,6 +7,8 @@ import Register from "./components/authorization/Register";
 import Login from "./components/authorization/Login";
 import PrivateRoute from "./components/common/PrivateRoute";
 import NavBar from "./components/layout/NavBar";
+import Profile from "./components/User/Profile";
+import CreateProfile from "./components/User/CreateProfile";
 
 //Css
 import "./App.css";
@@ -62,7 +64,8 @@ const App = ({ classes }) => {
             <Route exact path="/" component={Home} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
-            <PrivateRoute exact path="/profile" />
+            <PrivateRoute exact path="/profile" component={Profile} />
+            <PrivateRoute exact path="/profile/new" component={CreateProfile} />
           </Switch>
         </main>
       </div>

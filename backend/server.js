@@ -6,6 +6,7 @@ dotenv.config();
 
 //Load Routes
 const userRoutes = require("./routes/userRoute");
+const profileRoutes = require("./routes/profileRoute");
 
 //Load authentication and environment variables
 const keys = require("./config/keys");
@@ -43,6 +44,7 @@ app.use(passport.session());
 
 //Define Routes
 app.use("/api/users", userRoutes);
+app.use("/api/profile", profileRoutes);
 
 //route doesn't exist
 app.get("*", (req, res, next) => {
