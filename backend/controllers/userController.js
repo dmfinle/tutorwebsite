@@ -124,14 +124,15 @@ exports.loginUser = asyncHandler(async (req, res) => {
             isAdmin: user.isAdmin,
             email: user.email,
             confirmed: user.confirmed,
+            hasProfile: user.hasProfile,
           }; // Create JWT Payload
 
           // Sign token
           jwt.sign(
             payload,
             keys.secretOrKey,
-            //900 seconds or 15 minutes
-            { expiresIn: 900 },
+            //3600 seconds or 60 minutes
+            { expiresIn: 3600 },
             (err, token) => {
               if (err) console.error(err);
               res.json({

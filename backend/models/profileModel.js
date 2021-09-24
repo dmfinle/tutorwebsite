@@ -8,10 +8,10 @@ const ProfileSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "users",
   },
-  handle: {
-    type: String,
-    max: 40,
-  },
+  // handle: {
+  //   type: String,
+  //   max: 40,
+  // },
   //   major: {
   //     type: [String],
   //     required: true,
@@ -23,9 +23,9 @@ const ProfileSchema = new Schema({
     type: String,
     max: 300,
   },
-  //   courses: {
-  //     type: [Object],
-  //   },
+  courses: {
+    type: [Object],
+  },
   type: {
     type: String,
     required: true,

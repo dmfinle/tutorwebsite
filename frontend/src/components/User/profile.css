@@ -1,155 +1,157 @@
 .chip {
-	margin-right: 10px;
-	margin-bottom: 10px;
-	border-color: #5E9CAE !important;
-	background-color: #5E9CAE !important;
-	color: #fff !important;
-	font-weight: 500 !important;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  border-color: #5e9cae !important;
+  background-color: #5e9cae !important;
+  color: #fff !important;
+  font-weight: 500 !important;
 }
 
 .search-chip {
-	margin-right: 10px;
-	margin-bottom: 10px;
-	margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .cardHeader {
-	border-bottom: 1px solid rgba(0, 0, 0, 0.23);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.23);
 }
 
 .spaceBelow {
-	margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .spaceAbove {
-	margin-top: 10px;
+  margin-top: 10px;
 }
 
 .icon {
-	color: #838383 !important;
-	margin-left: 3px;
-	font-size: 20px;
+  color: #838383 !important;
+  margin-left: 3px;
+  font-size: 20px;
 }
 
 .about-title {
-	margin-top: 15px !important;
-	font-weight: bold !important;
-	color: #ffffff !important;
+  margin-top: 15px !important;
+  font-weight: bold !important;
+  color: #ffffff !important;
 }
 
 .about-text {
-	color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 .about-line {
-	background-color: #EEAF30 !important;
-	margin-top: 15px !important;
-	margin-bottom: 15px !important
+  background-color: #eeaf30 !important;
+  margin-top: 15px !important;
+  margin-bottom: 15px !important;
 }
 
 .padding20 {
-	padding-left: 10%;
-	padding-right: 10%;
+  padding-left: 10%;
+  padding-right: 10%;
 }
 
 .paddingMargin {
-	padding: 20px;
-	margin-bottom: 40px;
+  padding: 20px;
+  margin-bottom: 40px;
 }
 
 .courses {
-	padding: 10px;
+  padding: 10px;
 }
 
 .editHeading {
-	padding-bottom: 10px;
-	border-bottom: 7px solid #1E1656;
-	margin-bottom: 20px !important;
+  padding-bottom: 10px;
+  border-bottom: 7px solid #1e1656;
+  margin-bottom: 20px !important;
 }
 
 .button {
-	color: #1E1656;
-	border-color: #1E1656;
+  color: #1e1656;
+  border-color: #1e1656;
 }
 
 .card {
-	background-color: rgba(0,0,0,0) !important;
-	padding: 5px;
-	border: 1px solid rgba(0, 0, 0, 0.23);
+  background-color: rgba(0, 0, 0, 0) !important;
+  padding: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.23);
 }
 
-.courseId, .courseName, .courseNumber {
-	padding-top: 0px;
+.courseId,
+.courseName,
+.courseNumber {
+  padding-top: 0px;
 }
 
 .purpleAvatar {
-    margin: 10px;
-    color: #ffffff !important;
-    background-color: #1E1656 !important;
+  margin: 10px;
+  color: #ffffff !important;
+  background-color: #1e1656 !important;
 }
 
 .blueAvatar {
-    margin: 10px;
-    color: #ffffff !important;
-    background-color: #5E9CAE !important;
+  margin: 10px;
+  color: #ffffff !important;
+  background-color: #5e9cae !important;
 }
 
 .colorPurple {
-	color: #1E1656 !important;
+  color: #1e1656 !important;
 }
 
 .colorBlue {
-	color: #5E9CAE !important;
+  color: #5e9cae !important;
 }
 
 .backgroundPurple {
-	background-color: #1E1656 !important;
+  background-color: #1e1656 !important;
 }
 
 .backgroundBlue {
-	background-color: #5E9CAE !important;
+  background-color: #5e9cae !important;
 }
 
 .purpleSubmit {
-	background-color: #1E1656 !important;
-    color: #ffffff !important;
-    margin-top: 20px !important;
+  background-color: #1e1656 !important;
+  color: #ffffff !important;
+  margin-top: 20px !important;
 }
 
 .purpleDelete {
-	background-color: #1E1656 !important;
-    color: #ffffff !important;
+  background-color: #1e1656 !important;
+  color: #ffffff !important;
 }
 
 .startButton {
-	color: #ffffff !important;
-	background-color: rgba(238,175,48,1) !important;
-	margin-top: 10px !important;
+  color: #ffffff !important;
+  background-color: rgba(238, 175, 48, 1) !important;
+  margin-top: 10px !important;
 }
 
 .tag {
-	background-color: #F5F5F5;
-	padding: 2px 5px;
-	border-radius: 5px;
-	color: #494949;
-	font-size: 11px;
-	margin-left: 15px;
+  background-color: #f5f5f5;
+  padding: 2px 5px;
+  border-radius: 5px;
+  color: #494949;
+  font-size: 11px;
+  margin-left: 15px;
 }
 
 .error {
-	color: #B71234;
-	font-style: italic;
-	font-size: small;
-	font-family: 'Roboto', 'Helvetica', sans-serif;
+  color: #b71234;
+  font-style: italic;
+  font-size: small;
+  font-family: "Roboto", "Helvetica", sans-serif;
 }
 
 #warning {
-	font-size: 50px !important;
+  font-size: 50px !important;
 }
 
 .toastIcon {
-	font-size: 20px !important;
-	margin-right: 10px !important;
+  font-size: 20px !important;
+  margin-right: 10px !important;
 }
 
 img {
@@ -158,4 +160,72 @@ img {
   -moz-user-drag: none;
   -o-user-drag: none;
   user-drag: none;
+}
+
+.loader,
+.loader:before,
+.loader:after {
+  border-radius: 50%;
+}
+.loader {
+  color: #ffffff;
+  font-size: 11px;
+  text-indent: -99999em;
+  margin: 55px auto;
+  position: relative;
+  width: 10em;
+  height: 10em;
+  box-shadow: inset 0 0 0 1em;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+}
+.loader:before,
+.loader:after {
+  position: absolute;
+  content: "";
+}
+.loader:before {
+  width: 5.2em;
+  height: 10.2em;
+  background: #0dc5c1;
+  border-radius: 10.2em 0 0 10.2em;
+  top: -0.1em;
+  left: -0.1em;
+  -webkit-transform-origin: 5.1em 5.1em;
+  transform-origin: 5.1em 5.1em;
+  -webkit-animation: load2 2s infinite ease 1.5s;
+  animation: load2 2s infinite ease 1.5s;
+}
+.loader:after {
+  width: 5.2em;
+  height: 10.2em;
+  background: #0dc5c1;
+  border-radius: 0 10.2em 10.2em 0;
+  top: -0.1em;
+  left: 4.9em;
+  -webkit-transform-origin: 0.1em 5.1em;
+  transform-origin: 0.1em 5.1em;
+  -webkit-animation: load2 2s infinite ease;
+  animation: load2 2s infinite ease;
+}
+@-webkit-keyframes load2 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load2 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }

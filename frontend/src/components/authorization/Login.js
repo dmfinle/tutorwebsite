@@ -122,7 +122,9 @@ class Login extends Component {
             Are you a new user? Click here to register!
           </Link>
         </div>
-        {auth.isAuthenticated ? (
+        {auth.isAuthenticated && auth.user.hasProfile ? (
+          <Redirect to="/profile" />
+        ) : auth.isAuthenticated && !auth.user.hasProfile ? (
           <Redirect to="/profile/new" />
         ) : (
           <React.Fragment />
@@ -142,6 +144,7 @@ Login.propTypes = {
 const mapStateToProps = (state) => ({
   auth: state.auth,
   errors: state.errors,
+  profile: state.profile,
 });
 
 export default connect(mapStateToProps, { loginUser })(

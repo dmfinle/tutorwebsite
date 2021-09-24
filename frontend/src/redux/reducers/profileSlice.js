@@ -13,9 +13,10 @@ const initialState = {
 // Return profile of currently logged in user
 export const getCurrentProfile = createAsyncThunk(
   "profile/getCurrentProfile",
-  async ({}, { dispatch, rejectWithValue }) => {
+  async (id, { dispatch, rejectWithValue }) => {
     try {
-      const resp = await axios.get("/api/profile");
+      const resp = await axios.get(`/api/profile/${id}`);
+
       dispatch(getProfile(resp.data));
       //create async thunk must return a promise i.e the response from the request
       return resp.data;
@@ -25,6 +26,7 @@ export const getCurrentProfile = createAsyncThunk(
       }
       //Set error state with specific details
       dispatch(getProfile({}));
+      dispatch(getErrors(err.response.data));
       return rejectWithValue(err.response.data);
     }
   }
@@ -51,15 +53,8 @@ const profileSlice = createSlice({
       return {
         ...state,
         profile: action.payload,
-        //loading: false,
       };
     },
-    // clearCurrentProfile(state, action) {
-    //   return {
-    //     ...state,
-    //     profile: null,
-    //   };
-    // },
   },
   extraReducers: (builder) => {
     builder
@@ -67,9 +62,9 @@ const profileSlice = createSlice({
         state.loading = true;
       })
       .addCase(getCurrentProfile.fulfilled, (state, action) => {
-        //dispatch(getProfile(action.payload));
         state.loading = false;
-      });
+      })
+      .addCase(getCurrentProfile.rejected, (state, action) => {});
   },
 });
 

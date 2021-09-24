@@ -4,18 +4,18 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 
-//Get current user /api/users/current
-router.get(
-  "/",
-  passport.authenticate("jwt", { session: false }),
-  profileController.getCurrentUser
-);
-
-//Get current user /api/users/current
+//Create Profile /api/profile
 router.post(
   "/",
   passport.authenticate("jwt", { session: false }),
   profileController.createUser
+);
+
+//Get current user profile /api/profile
+router.get(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  profileController.getCurrentUser
 );
 
 module.exports = router;

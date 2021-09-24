@@ -60,6 +60,7 @@ const App = ({ classes }) => {
         <NavBar />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
+
           <Switch>
             <Route exact path="/" component={Home} />
             <Route exact path="/register" component={Register} />

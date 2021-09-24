@@ -4,6 +4,7 @@ import axios from "axios";
 import setAuthToken from "../../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
 import { getErrors, clearErrors } from "../reducers/errorSlice";
+import { getCurrentProfile } from "./profileSlice";
 
 const initialState = {
   isAuthenticated: false,
@@ -68,8 +69,9 @@ export const logoutUser = createAsyncThunk(
       localStorage.removeItem("jwtToken");
       // Set auth header for future requests
       setAuthToken(false);
-      // Set current user to {} which will set isAuthenticated to false
+      // Set current user to {} which will set isAuthenticated to false and clears profile
       dispatch(setCurrentUser(userData));
+      dispatch(getCurrentProfile(userData));
     } catch (err) {
       console.log("error logging out");
     }

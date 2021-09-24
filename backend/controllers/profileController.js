@@ -14,15 +14,18 @@ const validateProfileInput = require("../validation/profileValidation");
 
 exports.getCurrentUser = asyncHandler(async (req, res) => {
   const errors = {};
+  console.log(req.params);
   try {
     const profile = await Profile.findOne({
-      user: req.user.id,
-    }).populate("user", ["isAdmin"]);
+      user: req.params.id,
+    }).populate("user", ["firstName", "lastName", "email", "isAdmin"]);
     if (!profile) {
       errors.noprofile = "There is no profile for this user";
       return res.status(404).json(errors);
     }
     res.json(profile);
+    console.log(profile);
+    console.log("hello");
   } catch (err) {
     res.status(404).json(err);
   }
@@ -43,11 +46,11 @@ exports.createUser = (req, res) => {
   const profileFields = {};
   profileFields.user = req.user.id;
 
-  if (req.body.handle) profileFields.handle = req.body.handle;
+  //if (req.body.handle) profileFields.handle = req.body.handle;
   //if (req.body.major) profileFields.major = req.body.major;
   //if (req.body.minor) profileFields.minor = req.body.minor;
   if (req.body.type) profileFields.type = req.body.type;
-  //if (req.body.courses) profileFields.courses = req.body.courses;
+  if (req.body.courses) profileFields.courses = req.body.courses;
   profileFields.bio = req.body.bio ? req.body.bio : "";
   profileFields.availability = req.body.availability
     ? req.body.availability
@@ -64,16 +67,15 @@ exports.createUser = (req, res) => {
     }
     // Profile not found
     else {
-      Profile.findOne({ handle: profileFields.handle }).then((profile) => {
-        new Profile(profileFields).save().then((profile) => res.json(profile));
-      });
+      new Profile(profileFields).save().then((profile) => console.log(profile));
+
       // set has profile field to true
       User.findOne({ _id: req.user.id }).then((user) => {
         if (user) {
           User.findOneAndUpdate(
             { _id: req.user.id },
             { $set: { hasProfile: true } }
-          ).then((user) => res.json(user));
+          ).then((user) => res.sendStatus(200));
         }
       });
     }

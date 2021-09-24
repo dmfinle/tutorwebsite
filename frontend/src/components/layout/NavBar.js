@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import DarkModeToggle from "react-dark-mode-toggle";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import classNames from "classnames";
@@ -131,6 +132,7 @@ const styles = (theme) => ({
 class AppNavbar extends Component {
   state = {
     open: false,
+    isDarkMode: false,
   };
 
   handleDrawerOpen = (e) => {
@@ -143,8 +145,13 @@ class AppNavbar extends Component {
 
   onLogoutClick = (e) => {
     e.preventDefault();
-    //this.props.clearCurrentProfile();
+
     this.props.logoutUser();
+  };
+
+  //Move this to redux so app.js can see it
+  darkModeToggle = () => {
+    this.setState({ isDarkMode: !this.state.isDarkMode });
   };
 
   render() {
@@ -180,7 +187,15 @@ class AppNavbar extends Component {
                 height="50"
               />
             </Link>
+
             <div className={classes.grow} />
+            <span align="right">
+              <DarkModeToggle
+                onChange={this.darkModeToggle}
+                checked={this.state.isDarkMode}
+                size={50}
+              />
+            </span>
           </Toolbar>
         </AppBar>
         <Drawer
