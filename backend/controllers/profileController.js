@@ -25,7 +25,6 @@ exports.getCurrentUser = asyncHandler(async (req, res) => {
     }
     res.json(profile);
     console.log(profile);
-    console.log("hello");
   } catch (err) {
     res.status(404).json(err);
   }

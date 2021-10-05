@@ -1,7 +1,6 @@
-import isEmpty from "../../utils/is-empty";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { getErrors, clearErrors } from "../reducers/errorSlice";
+import { getErrors } from "../reducers/errorSlice";
 
 const initialState = {
   profile: null,

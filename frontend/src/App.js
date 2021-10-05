@@ -7,8 +7,12 @@ import Register from "./components/authorization/Register";
 import Login from "./components/authorization/Login";
 import PrivateRoute from "./components/common/PrivateRoute";
 import NavBar from "./components/layout/NavBar";
-import Profile from "./components/User/Profile";
-import CreateProfile from "./components/User/CreateProfile";
+import Profile from "./components/user/Profile";
+import CreateProfile from "./components/user/CreateProfile";
+import RoomComponent from "./components/video/components/pageComponents/RoomComponent/RoomComponent";
+import VideoHome from "./components/video/components/pageComponents/home/home";
+import ErrorBoundary from "./components/video/components/resuableComponents/errorBoundary/ErrorBoundary";
+import NavBarVideo from "./components/video/components/resuableComponents/navbar/navbar";
 
 //Css
 import "./App.css";
@@ -67,6 +71,12 @@ const App = ({ classes }) => {
             <Route exact path="/login" component={Login} />
             <PrivateRoute exact path="/profile" component={Profile} />
             <PrivateRoute exact path="/profile/new" component={CreateProfile} />
+            <ErrorBoundary history={window.history}>
+              <NavBarVideo>
+                <PrivateRoute path="/join/:id" component={RoomComponent} />
+                <PrivateRoute path={["/room"]} exact component={VideoHome} />
+              </NavBarVideo>
+            </ErrorBoundary>
           </Switch>
         </main>
       </div>
