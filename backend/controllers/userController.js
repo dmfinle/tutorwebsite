@@ -63,7 +63,7 @@ exports.registerUser = asyncHandler(async (req, res) => {
         newUser.confirmed = true;
       }
 
-      console.log(newUser);
+      //console.log(newUser);
       // Generate hashed password
       bcrypt.genSalt(parseInt(keys.saltRounds), (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {

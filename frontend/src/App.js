@@ -9,11 +9,9 @@ import PrivateRoute from "./components/common/PrivateRoute";
 import NavBar from "./components/layout/NavBar";
 import Profile from "./components/user/Profile";
 import CreateProfile from "./components/user/CreateProfile";
-import RoomComponent from "./components/video/components/pageComponents/RoomComponent/RoomComponent";
-import VideoHome from "./components/video/components/pageComponents/home/home";
-import ErrorBoundary from "./components/video/components/resuableComponents/errorBoundary/ErrorBoundary";
-import NavBarVideo from "./components/video/components/resuableComponents/navbar/navbar";
 
+import CreateRoom from "./components/video2/CreateRoom";
+import Room from "./components/video2/Room";
 //Css
 import "./App.css";
 
@@ -71,12 +69,8 @@ const App = ({ classes }) => {
             <Route exact path="/login" component={Login} />
             <PrivateRoute exact path="/profile" component={Profile} />
             <PrivateRoute exact path="/profile/new" component={CreateProfile} />
-            <ErrorBoundary history={window.history}>
-              <NavBarVideo>
-                <PrivateRoute path="/join/:id" component={RoomComponent} />
-                <PrivateRoute path={["/room"]} exact component={VideoHome} />
-              </NavBarVideo>
-            </ErrorBoundary>
+            <PrivateRoute path="/room" exact component={CreateRoom} />
+            <PrivateRoute path="/room/:roomID" component={Room} />
           </Switch>
         </main>
       </div>

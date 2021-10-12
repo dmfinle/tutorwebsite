@@ -5,7 +5,7 @@ import App from "./App";
 import store from "./redux/store";
 import { Provider } from "react-redux";
 import * as serviceWorker from "./serviceWorker";
-import "./components/video/style/globalStyle.scss";
+//import "./components/video/style/globalStyle.scss";
 
 ReactDOM.render(
   <React.StrictMode>

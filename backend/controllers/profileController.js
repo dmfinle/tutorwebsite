@@ -14,7 +14,7 @@ const validateProfileInput = require("../validation/profileValidation");
 
 exports.getCurrentUser = asyncHandler(async (req, res) => {
   const errors = {};
-  console.log(req.params);
+  //console.log(req.params);
   try {
     const profile = await Profile.findOne({
       user: req.params.id,
@@ -24,7 +24,7 @@ exports.getCurrentUser = asyncHandler(async (req, res) => {
       return res.status(404).json(errors);
     }
     res.json(profile);
-    console.log(profile);
+    //console.log(profile);
   } catch (err) {
     res.status(404).json(err);
   }
