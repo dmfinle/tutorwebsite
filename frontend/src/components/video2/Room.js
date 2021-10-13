@@ -2,6 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
+import CallIcon from "@material-ui/icons/CallEnd";
+import MicIcon from "@material-ui/icons/Mic";
+import MicOffIcon from "@material-ui/icons/MicOff";
+import VideocamIcon from "@material-ui/icons/Videocam";
+import VideocamOffIcon from "@material-ui/icons/VideocamOff";
+import { Redirect } from "react-router";
 
 const Container = styled.div`
   padding: 20px;
@@ -49,8 +55,6 @@ const Room = (props) => {
   const roomID = props.match.params.roomID;
 
   useEffect(() => {
-    console.log("peer");
-    console.log(peersRef);
     if (share) {
       if (peers[0] !== undefined && peers[0].peer.destroyed === false) {
         const track = peers[0].peer.streams[0].getVideoTracks()[0];
@@ -58,15 +62,6 @@ const Room = (props) => {
         peers[0].peer.replaceTrack(track, tracky, peers[0].peer.streams[0]);
       }
     }
-    // else {
-    //   if (peers[0] !== undefined && peers[0].peer.destroyed === false) {
-    //     peers[0].peer.replaceTrack(
-    //       tracky,
-    //       userStream.current.getTracks()[1],
-    //       peers[0].peer.streams[0]
-    //     );
-    //   }
-    // }
   }, [share, tracky, peers]);
 
   useEffect(() => {
@@ -77,16 +72,13 @@ const Room = (props) => {
         userVideo.current.srcObject = stream;
         userStream.current = stream;
 
-        console.log("first stream");
         //console.log(userVideo.current.srcObject);
 
         socketRef.current.emit("join room", roomID);
         socketRef.current.on("all users", (users) => {
-          console.log("all users");
           const peers = [];
 
           users.forEach((userID) => {
-            console.log("user for each");
             const peer = createPeer(userID, socketRef.current.id, stream);
             peersRef.current.push({
               peerID: userID,
@@ -120,6 +112,7 @@ const Room = (props) => {
         });
 
         socketRef.current.on("user left", (id) => {
+          console.log("user left");
           const peerObj = peersRef.current.find((p) => p.peerID === id);
           if (peerObj) {
             peerObj.peer.destroy();
@@ -239,7 +232,6 @@ const Room = (props) => {
           setTracky(track);
           setShare(true);
 
-          console.log("user start");
           //console.log(userVideo.current.srcObject.getTracks());
 
           if (peers[0] !== undefined && peers[0].peer.destroyed === false) {
@@ -252,8 +244,7 @@ const Room = (props) => {
 
           track.onended = function () {
             setShare(false);
-            console.log(share);
-            console.log("-------ended");
+
             userVideo.current.srcObject = userStream.current;
 
             if (
@@ -279,15 +270,30 @@ const Room = (props) => {
     }
   }
 
+  //Force disconnect
+  function userLeft() {
+    props.history.push("/room");
+    //Force refresh here
+  }
+
   return (
     <Container>
       <button onClick={shareScreen}> Share Screen </button>
-      <button onClick={micControl}> Toggle Mic </button>
-      <button onClick={cameraControl}> Toggle Camera </button>
       <StyledVideo ref={userVideo} autoPlay playsInline />
       {peers.map((peer) => {
         return <Video key={peer.peerID} peer={peer.peer} />;
       })}
+      {mic ? (
+        <MicIcon onClick={micControl} />
+      ) : (
+        <MicOffIcon onClick={micControl} />
+      )}
+      {camera ? (
+        <VideocamIcon onClick={cameraControl} />
+      ) : (
+        <VideocamOffIcon onClick={cameraControl} />
+      )}
+      <CallIcon onClick={userLeft} />
     </Container>
   );
 };
