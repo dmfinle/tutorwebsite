@@ -7,7 +7,8 @@ import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import VideocamIcon from "@material-ui/icons/Videocam";
 import VideocamOffIcon from "@material-ui/icons/VideocamOff";
-import { Redirect } from "react-router";
+import ChatIcon from "@material-ui/icons/Chat";
+import ChatBox from "./ChatBox";
 
 const Container = styled.div`
   padding: 20px;
@@ -50,7 +51,10 @@ const Room = (props) => {
   const [camera, setCamera] = useState(true);
   const [share, setShare] = useState(false);
   const [tracky, setTracky] = useState({});
+  const [chatToggle, setChatToggle] = useState(false);
   var track;
+  const [userDetails, setUserDetails] = useState(null);
+  const [messages, setMessages] = useState([]);
 
   const roomID = props.match.params.roomID;
 
@@ -65,6 +69,7 @@ const Room = (props) => {
   }, [share, tracky, peers]);
 
   useEffect(() => {
+    setUserDetails({ name: "Daniel" });
     socketRef.current = io.connect("/");
     navigator.mediaDevices
       .getUserMedia({ video: videoConstraints, audio: true })
@@ -272,8 +277,12 @@ const Room = (props) => {
 
   //Force disconnect
   function userLeft() {
+    socketRef.current.destroy();
     props.history.push("/room");
-    //Force refresh here
+  }
+
+  function chatHandle() {
+    setChatToggle(!chatToggle);
   }
 
   return (
@@ -294,6 +303,11 @@ const Room = (props) => {
         <VideocamOffIcon onClick={cameraControl} />
       )}
       <CallIcon onClick={userLeft} />
+      <ChatIcon onClick={chatHandle}></ChatIcon>
+      <ChatBox
+        chatToggle={chatToggle}
+        closeDrawer={() => chatHandle(false)}
+      ></ChatBox>
     </Container>
   );
 };
