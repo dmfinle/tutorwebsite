@@ -71,25 +71,75 @@ const server = app.listen(
 const io = socket(server);
 const users = {};
 
+//chat stuff
+let users2 = [];
+
+const messages = {
+  general: [],
+  random: [],
+  jokes: [],
+  javascript: [],
+};
 const socketToRoom = {};
 
 io.on("connection", (socket) => {
-  socket.on("join room", (roomID) => {
-    if (users[roomID]) {
-      const length = users[roomID].length;
-      if (length === 2) {
-        socket.emit("room full");
-        console.log("room full");
-        return;
-      }
-      users[roomID].push(socket.id);
-    } else {
-      users[roomID] = [socket.id];
-    }
-    socketToRoom[socket.id] = roomID;
-    const usersInThisRoom = users[roomID].filter((id) => id !== socket.id);
+  // socket.on("join room", (roomID) => {
+  //   if (users[roomID]) {
+  //     const length = users[roomID].length;
+  //     if (length === 2) {
+  //       socket.emit("room full");
+  //       console.log("room full");
+  //       return;
+  //     }
+  //     users[roomID].push(socket.id);
+  //   } else {
+  //     users[roomID] = [socket.id];
+  //   }
+  //   socketToRoom[socket.id] = roomID;
+  //   const usersInThisRoom = users[roomID].filter((id) => id !== socket.id);
 
-    socket.emit("all users", usersInThisRoom);
+  //   socket.emit("all users", usersInThisRoom);
+  // });
+
+  //chat stuff
+  socket.on("join server", (username) => {
+    const user = {
+      username,
+      id: socket.id,
+    };
+    users2.push(user);
+    io.emit("new user", users2);
+  });
+
+  //chat stuff
+  socket.on("join room", (roomName, cb) => {
+    socket.join(roomName);
+    cb(messages[roomName]);
+  });
+
+  //chat stuff
+  socket.on("send message", ({ content, to, sender, chatName, isChannel }) => {
+    if (isChannel) {
+      const payload = {
+        content,
+        chatName,
+        sender,
+      };
+      socket.to(to).emit("new message", payload);
+    } else {
+      const payload = {
+        content,
+        chatName: sender,
+        sender,
+      };
+      socket.to(to).emit("new message", payload);
+    }
+    if (messages[chatName]) {
+      messages[chatName].push({
+        sender,
+        content,
+      });
+    }
   });
 
   socket.on("sending signal", (payload) => {
@@ -106,13 +156,19 @@ io.on("connection", (socket) => {
     });
   });
 
+  // socket.on("disconnect", () => {
+  //   const roomID = socketToRoom[socket.id];
+  //   let room = users[roomID];
+  //   if (room) {
+  //     room = room.filter((id) => id !== socket.id);
+  //     users[roomID] = room;
+  //   }
+  //   socket.broadcast.emit("user left", socket.id);
+  // });
+
+  //chat stuff
   socket.on("disconnect", () => {
-    const roomID = socketToRoom[socket.id];
-    let room = users[roomID];
-    if (room) {
-      room = room.filter((id) => id !== socket.id);
-      users[roomID] = room;
-    }
-    socket.broadcast.emit("user left", socket.id);
+    users2 = users2.filter((u) => u.id !== socket.id);
+    io.emit("new user", users2);
   });
 });
