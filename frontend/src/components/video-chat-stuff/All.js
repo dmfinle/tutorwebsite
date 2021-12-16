@@ -3,8 +3,9 @@ import Form from "./UsernameForm";
 import Chat from "./Chat";
 import io from "socket.io-client";
 import immer from "immer";
-
+import { connect } from "react-redux";
 import React, { useState, useRef, useEffect } from "react";
+import { v1 as uuid } from "uuid";
 
 const initialMessagesState = {
   general: [],
@@ -12,7 +13,7 @@ const initialMessagesState = {
   jokes: [],
   javascript: [],
 };
-function All() {
+function All(props) {
   const [username, setUsername] = useState("");
   const [connected, setConnected] = useState(false);
   const [currentChat, setCurrentChat] = useState({
@@ -41,12 +42,14 @@ function All() {
       sender: username,
       chatName: currentChat.chatName,
       isChannel: currentChat.isChannel,
+      date: Date(),
     };
     socketRef.current.emit("send message", payload);
     const newMessages = immer(messages, (draft) => {
       draft[currentChat.chatName].push({
         sender: username,
         content: message,
+        date: Date(),
       });
     });
     setMessages(newMessages);
@@ -63,7 +66,7 @@ function All() {
     const newConnectedRooms = immer(connectedRooms, (draft) => {
       draft.push(room);
     });
-    socketRef.current.emit("join room", room, (messages) =>
+    socketRef.current.emit("join room2", room, (messages) =>
       roomJoinCallback(messages, room)
     );
     setConnectedRooms(newConnectedRooms);
@@ -83,28 +86,32 @@ function All() {
     setUsername(e.target.value);
   }
 
-  function connect() {
+  function connect2() {
+    setUsername(props.auth.user.firstName);
     setConnected(true);
     socketRef.current = io.connect("/");
-    socketRef.current.emit("join server", username);
-    socketRef.current.emit("join room", "general", (messages) =>
+    socketRef.current.emit("join room", uuid(), username);
+    socketRef.current.emit("join room2", "general", (messages) =>
       roomJoinCallback(messages, "general")
     );
     socketRef.current.on("new user", (allUsers) => {
       setAllUsers(allUsers);
     });
-    socketRef.current.on("new message", ({ content, sender, chatName }) => {
-      setMessages((messages) => {
-        const newMessages = immer(messages, (draft) => {
-          if (draft[chatName]) {
-            draft[chatName].push({ content, sender });
-          } else {
-            draft[chatName] = [{ content, sender }];
-          }
+    socketRef.current.on(
+      "new message",
+      ({ content, sender, chatName, date }) => {
+        setMessages((messages) => {
+          const newMessages = immer(messages, (draft) => {
+            if (draft[chatName]) {
+              draft[chatName].push({ content, sender, date });
+            } else {
+              draft[chatName] = [{ content, sender, date }];
+            }
+          });
+          return newMessages;
         });
-        return newMessages;
-      });
-    });
+      }
+    );
   }
 
   let body;
@@ -121,15 +128,24 @@ function All() {
         currentChat={currentChat}
         toggleChat={toggleChat}
         messages={messages[currentChat.chatName]}
+        chatToggle={props.chatToggle}
+        closeDrawer={() => props.chatHandle(false)}
       />
     );
   } else {
-    body = (
-      <Form username={username} onChange={handleChange} connect={connect} />
-    );
+    // body = (
+    //   <Form username={username} onChange={handleChange} connect={connect2} />
+    // );
+
+    connect2();
   }
 
   return <div className="App">{body}</div>;
 }
 
-export default All;
+const mapStateToProps = (state) => ({
+  profile: state.profile,
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps)(All);

@@ -119,8 +119,8 @@ exports.loginUser = asyncHandler(async (req, res) => {
           // User Matched
           const payload = {
             id: user.id,
-            firstname: user.firstname,
-            lastname: user.lastname,
+            firstName: user.firstName,
+            lastName: user.lastName,
             isAdmin: user.isAdmin,
             email: user.email,
             confirmed: user.confirmed,
