@@ -3,9 +3,8 @@ import Form from "./UsernameForm";
 import Chat from "./Chat";
 import io from "socket.io-client";
 import immer from "immer";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import React, { useState, useRef, useEffect } from "react";
-import { v1 as uuid } from "uuid";
 
 const initialMessagesState = {
   general: [],
@@ -26,6 +25,7 @@ function All(props) {
   const [messages, setMessages] = useState(initialMessagesState);
   const [message, setMessage] = useState("");
   const socketRef = useRef();
+  const auth = useSelector((state) => state.auth);
 
   function handleMessageChange(e) {
     setMessage(e.target.value);
@@ -82,15 +82,14 @@ function All(props) {
     setCurrentChat(currentChat);
   }
 
-  function handleChange(e) {
-    setUsername(e.target.value);
-  }
+  // function handleChange(e) {
+  //   setUsername(e.target.value);
+  // }
 
   function connect2() {
-    setUsername(props.auth.user.firstName);
+    setUsername(auth.user.email);
     setConnected(true);
     socketRef.current = io.connect("/");
-    socketRef.current.emit("join room", uuid(), username);
     socketRef.current.emit("join room2", "general", (messages) =>
       roomJoinCallback(messages, "general")
     );
@@ -143,9 +142,9 @@ function All(props) {
   return <div className="App">{body}</div>;
 }
 
-const mapStateToProps = (state) => ({
-  profile: state.profile,
-  auth: state.auth,
-});
+// const mapStateToProps = (state) => ({
+//   profile: state.profile,
+//   auth: state.auth,
+// });
 
-export default connect(mapStateToProps)(All);
+export default SocketChat;

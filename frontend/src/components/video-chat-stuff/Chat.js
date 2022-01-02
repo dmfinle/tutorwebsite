@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import React, { useState } from "react";
+import React from "react";
+import { useSelector } from "react-redux";
 import { Button, Drawer, Input } from "@material-ui/core";
 import { getMessageDateOrTime } from "../../utils/helper";
 // Import Styles
@@ -60,63 +61,7 @@ const Messages = styled.div`
 `;
 
 function Chat(props) {
-  // function renderRooms(room) {
-  //   const currentChat = {
-  //     chatName: room,
-  //     isChannel: true,
-  //     recevierId: "",
-  //   };
-  //   return (
-  //     <Row onClick={() => props.toggleChat(currentChat)} key={room}>
-  //       {room}
-  //     </Row>
-  //   );
-  // }
-
-  // function renderUser(user) {
-  //   if (user.id === props.yourId) {
-  //     return <Row key={user.id}>You: {user.username}</Row>;
-  //   }
-  //   const currentChat = {
-  //     chatName: user.username,
-  //     isChannel: false,
-  //     receiverId: user.id,
-  //   };
-  //   return (
-  //     <Row
-  //       onClick={() => {
-  //         props.toggleChat(currentChat);
-  //       }}
-  //       key={user.id}
-  //     >
-  //       {user.username}
-  //     </Row>
-  //   );
-  // }
-
-  // function renderMessages(message, index) {
-  //   return (
-  //     <div key={index}>
-  //       <h3>{message.sender}</h3>
-  //       <p>{message.content}</p>
-  //     </div>
-  //   );
-  // }
-
-  let body;
-
-  // if (
-  //   !props.currentChat.isChannel ||
-  //   props.connectedRooms.includes(props.currentChat.chatName)
-  // ) {
-  //   body = <Messages>{props.messages.map(renderMessages)}</Messages>;
-  // } else {
-  //   body = (
-  //     <button onClick={() => props.joinRoom(props.currentChat.chatName)}>
-  //       Join {props.currentChat.chatName}
-  //     </button>
-  //   );
-  // }
+  const auth = useSelector((state) => state.auth);
 
   function handleKeyPress(e) {
     if (e.key === "Enter") {
@@ -144,23 +89,39 @@ function Chat(props) {
           {props.messages.map((chatDetails) => {
             return (
               <div key={uuid()} className="message-container">
-                <div className="message-wrapper">
-                  <div key={uuid()} className="message-title-wrapper">
-                    <h5 key={uuid()} className="message-name">
-                      {chatDetails.sender}
-                    </h5>
-                    <span key={uuid()} className="message-timestamp">
-                      {getMessageDateOrTime(chatDetails.date)}
-                    </span>
-                  </div>
-                  {chatDetails.sender ? (
+                {chatDetails.sender === auth.user.email ? (
+                  // displays message on right for your message
+                  <div className="message-wrapper message-wrapper-right">
+                    <div key={uuid()} className="message-title-wrapper">
+                      <h5 key={uuid()} className="message-name">
+                        {chatDetails.sender}
+                      </h5>
+                      <span key={uuid()} className="message-timestamp">
+                        {getMessageDateOrTime(chatDetails.date)}
+                      </span>
+                    </div>
+                    {console.log(chatDetails)}
                     <p key={uuid()} className="actual-message">
                       {chatDetails.content}
                     </p>
-                  ) : (
-                    <p> </p>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  // displays message on left for other user message
+                  <div className="message-wrapper">
+                    <div key={uuid()} className="message-title-wrapper">
+                      <h5 key={uuid()} className="message-name">
+                        {chatDetails.sender}
+                      </h5>
+                      <span key={uuid()} className="message-timestamp">
+                        {getMessageDateOrTime(chatDetails.date)}
+                      </span>
+                    </div>
+                    {console.log(chatDetails)}
+                    <p key={uuid()} className="actual-message">
+                      {chatDetails.content}
+                    </p>
+                  </div>
+                )}
               </div>
             );
           })}

@@ -8,7 +8,7 @@ import MicOffIcon from "@material-ui/icons/MicOff";
 import VideocamIcon from "@material-ui/icons/Videocam";
 import VideocamOffIcon from "@material-ui/icons/VideocamOff";
 import ChatIcon from "@material-ui/icons/Chat";
-import All from "../video-chat-stuff/All";
+import SocketChat from "../video-chat-stuff/SocketChat";
 
 const Container = styled.div`
   padding: 20px;
@@ -79,7 +79,7 @@ const Room = (props) => {
 
         //console.log(userVideo.current.srcObject);
 
-        socketRef.current.emit("join room", roomID, "Daniel");
+        socketRef.current.emit("join room", roomID);
         socketRef.current.on("all users", (users) => {
           const peers = [];
 
@@ -304,7 +304,7 @@ const Room = (props) => {
       )}
       <CallIcon onClick={userLeft} />
       <ChatIcon onClick={chatHandle}></ChatIcon>
-      <All chatToggle={chatToggle} chatHandle={chatHandle} />
+      <SocketChat chatToggle={chatToggle} chatHandle={chatHandle} />
     </Container>
   );
 };

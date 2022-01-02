@@ -26,9 +26,6 @@ import { checkAuth } from "./utils/authPersist";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
-//chat stuff
-import All from "./components/video-chat-stuff/All";
-
 // Check for JWT for persistence
 if (localStorage.jwtToken) {
   const decoded = checkAuth();
@@ -74,7 +71,6 @@ const App = ({ classes }) => {
             <PrivateRoute exact path="/profile/new" component={CreateProfile} />
             <PrivateRoute path="/room" exact component={CreateRoom} />
             <PrivateRoute path="/room/:roomID" component={Room} />
-            <Route exact path="/chat" component={All} />
           </Switch>
         </main>
       </div>

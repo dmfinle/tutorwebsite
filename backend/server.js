@@ -84,10 +84,9 @@ const messages = {
 const socketToRoom = {};
 
 io.on("connection", (socket) => {
-  socket.on("join room", (roomID, username) => {
+  socket.on("join room", (roomID) => {
     //
     const user = {
-      username,
       id: socket.id,
     };
     if (users[roomID]) {
@@ -172,6 +171,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+    console.log("disconnect");
     const roomID = socketToRoom[socket.id];
     let room = users[roomID];
     if (room) {
