@@ -58,6 +58,15 @@ const Room = (props) => {
 
   const roomID = props.match.params.roomID;
 
+  // useEffect(() => {
+  //   return () => {
+  //     socketRef.current.off("user joined", []);
+  //     socketRef.current.off("all users", []);
+  //     socketRef.current.off("receiving returned signal", []);
+  //     socketRef.current.off("user left", 0);
+  //   };
+  // }, []);
+
   useEffect(() => {
     if (share) {
       if (peers[0] !== undefined && peers[0].peer.destroyed === false) {
@@ -74,7 +83,9 @@ const Room = (props) => {
     navigator.mediaDevices
       .getUserMedia({ video: videoConstraints, audio: true })
       .then((stream) => {
-        userVideo.current.srcObject = stream;
+        if (userVideo.current !== undefined) {
+          userVideo.current.srcObject = stream;
+        }
         userStream.current = stream;
 
         //console.log(userVideo.current.srcObject);
@@ -277,6 +288,10 @@ const Room = (props) => {
 
   //Force disconnect
   function userLeft() {
+    socketRef.current.off("user joined", []);
+    socketRef.current.off("all users", []);
+    socketRef.current.off("receiving returned signal", []);
+    socketRef.current.off("user left", 0);
     socketRef.current.destroy();
     props.history.push("/room");
   }
@@ -304,7 +319,15 @@ const Room = (props) => {
       )}
       <CallIcon onClick={userLeft} />
       <ChatIcon onClick={chatHandle}></ChatIcon>
-      <SocketChat chatToggle={chatToggle} chatHandle={chatHandle} />
+      {socketRef.current !== undefined ? (
+        <SocketChat
+          chatToggle={chatToggle}
+          chatHandle={chatHandle}
+          socketRef={socketRef}
+        />
+      ) : (
+        <p></p>
+      )}
     </Container>
   );
 };

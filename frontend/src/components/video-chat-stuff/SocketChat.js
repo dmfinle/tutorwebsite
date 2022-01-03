@@ -12,7 +12,7 @@ const initialMessagesState = {
   jokes: [],
   javascript: [],
 };
-function All(props) {
+function SocketChat(props) {
   const [username, setUsername] = useState("");
   const [connected, setConnected] = useState(false);
   const [currentChat, setCurrentChat] = useState({
@@ -24,7 +24,7 @@ function All(props) {
   const [allUsers, setAllUsers] = useState([]);
   const [messages, setMessages] = useState(initialMessagesState);
   const [message, setMessage] = useState("");
-  const socketRef = useRef();
+  // const socketRef = useRef();
   const auth = useSelector((state) => state.auth);
 
   function handleMessageChange(e) {
@@ -36,6 +36,7 @@ function All(props) {
   }, [messages]);
 
   function sendMessage() {
+    console.log(props.socketRef.current);
     const payload = {
       content: message,
       to: currentChat.isChannel ? currentChat.chatName : currentChat.receiverId,
@@ -44,7 +45,7 @@ function All(props) {
       isChannel: currentChat.isChannel,
       date: Date(),
     };
-    socketRef.current.emit("send message", payload);
+    props.socketRef.current.emit("send message", payload);
     const newMessages = immer(messages, (draft) => {
       draft[currentChat.chatName].push({
         sender: username,
@@ -62,41 +63,38 @@ function All(props) {
     setMessages(newMessages);
   }
 
-  function joinRoom(room) {
-    const newConnectedRooms = immer(connectedRooms, (draft) => {
-      draft.push(room);
-    });
-    socketRef.current.emit("join room2", room, (messages) =>
-      roomJoinCallback(messages, room)
-    );
-    setConnectedRooms(newConnectedRooms);
-  }
+  // function joinRoom(room) {
+  //   const newConnectedRooms = immer(connectedRooms, (draft) => {
+  //     draft.push(room);
+  //   });
+  //   props.socketRef.current.emit("join room2", room, (messages) =>
+  //     roomJoinCallback(messages, room)
+  //   );
+  //   setConnectedRooms(newConnectedRooms);
+  // }
 
-  function toggleChat(currentChat) {
-    if (!messages[currentChat.chatName]) {
-      const newMessages = immer(messages, (draft) => {
-        draft[currentChat.chatName] = [];
-      });
-      setMessages(newMessages);
-    }
-    setCurrentChat(currentChat);
-  }
-
-  // function handleChange(e) {
-  //   setUsername(e.target.value);
+  // function toggleChat(currentChat) {
+  //   if (!messages[currentChat.chatName]) {
+  //     const newMessages = immer(messages, (draft) => {
+  //       draft[currentChat.chatName] = [];
+  //     });
+  //     setMessages(newMessages);
+  //   }
+  //   setCurrentChat(currentChat);
   // }
 
   function connect2() {
     setUsername(auth.user.email);
     setConnected(true);
-    socketRef.current = io.connect("/");
-    socketRef.current.emit("join room2", "general", (messages) =>
+    // socketRef.current = io.connect("/");
+    console.log(props);
+    props.socketRef.current.emit("join room2", "general", (messages) =>
       roomJoinCallback(messages, "general")
     );
-    socketRef.current.on("new user", (allUsers) => {
+    props.socketRef.current.on("new user", (allUsers) => {
       setAllUsers(allUsers);
     });
-    socketRef.current.on(
+    props.socketRef.current.on(
       "new message",
       ({ content, sender, chatName, date }) => {
         setMessages((messages) => {
@@ -120,31 +118,16 @@ function All(props) {
         message={message}
         handleMessageChange={handleMessageChange}
         sendMessage={sendMessage}
-        yourId={socketRef.current ? socketRef.current.id : ""}
-        allUsers={allUsers}
-        joinRoom={joinRoom}
-        connectedRooms={connectedRooms}
-        currentChat={currentChat}
-        toggleChat={toggleChat}
         messages={messages[currentChat.chatName]}
         chatToggle={props.chatToggle}
         closeDrawer={() => props.chatHandle(false)}
       />
     );
   } else {
-    // body = (
-    //   <Form username={username} onChange={handleChange} connect={connect2} />
-    // );
-
     connect2();
   }
 
   return <div className="App">{body}</div>;
 }
-
-// const mapStateToProps = (state) => ({
-//   profile: state.profile,
-//   auth: state.auth,
-// });
 
 export default SocketChat;
