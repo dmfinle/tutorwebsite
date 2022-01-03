@@ -17,14 +17,13 @@ function SocketChat(props) {
   const [connected, setConnected] = useState(false);
   const [currentChat, setCurrentChat] = useState({
     isChannel: true,
-    chatName: "general",
+    chatName: props.roomID,
     receiverId: "",
   });
-  const [connectedRooms, setConnectedRooms] = useState(["general"]);
+  const [connectedRooms, setConnectedRooms] = useState([props.roomID]);
   const [allUsers, setAllUsers] = useState([]);
-  const [messages, setMessages] = useState(initialMessagesState);
+  const [messages, setMessages] = useState({});
   const [message, setMessage] = useState("");
-  // const socketRef = useRef();
   const auth = useSelector((state) => state.auth);
 
   function handleMessageChange(e) {
@@ -87,9 +86,9 @@ function SocketChat(props) {
     setUsername(auth.user.email);
     setConnected(true);
     // socketRef.current = io.connect("/");
-    console.log(props);
-    props.socketRef.current.emit("join room2", "general", (messages) =>
-      roomJoinCallback(messages, "general")
+    console.log(messages[currentChat.chatName]);
+    props.socketRef.current.emit("join room2", props.roomID, (messages) =>
+      roomJoinCallback(messages, props.roomID)
     );
     props.socketRef.current.on("new user", (allUsers) => {
       setAllUsers(allUsers);
@@ -124,6 +123,7 @@ function SocketChat(props) {
       />
     );
   } else {
+    messages[currentChat.chatName] = [];
     connect2();
   }
 

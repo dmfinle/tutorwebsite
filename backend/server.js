@@ -75,12 +75,7 @@ const users = {};
 //chat stuff
 // let users2 = [];
 
-const messages = {
-  general: [],
-  random: [],
-  jokes: [],
-  javascript: [],
-};
+const messages = {};
 const socketToRoom = {};
 
 io.on("connection", (socket) => {
@@ -122,6 +117,7 @@ io.on("connection", (socket) => {
   //chat stuff
   socket.on("join room2", (roomName, cb) => {
     socket.join(roomName);
+    if (messages[roomName] === undefined) messages[roomName] = [];
     cb(messages[roomName]);
   });
 
@@ -179,7 +175,11 @@ io.on("connection", (socket) => {
       users[roomID] = room;
     }
     socket.broadcast.emit("user left", socket.id);
-    if (users[roomID].length === 0) messages.general = [];
+    if (users[roomID].length === 0) {
+      //messages[roomID] = [];
+      delete messages[roomID];
+    }
+    console.log(messages);
     io.emit("new user", users[roomID]);
   });
 

@@ -319,11 +319,12 @@ const Room = (props) => {
       )}
       <CallIcon onClick={userLeft} />
       <ChatIcon onClick={chatHandle}></ChatIcon>
-      {socketRef.current !== undefined ? (
+      {socketRef.current !== undefined && roomID !== undefined ? (
         <SocketChat
           chatToggle={chatToggle}
           chatHandle={chatHandle}
           socketRef={socketRef}
+          roomID={roomID}
         />
       ) : (
         <p></p>
