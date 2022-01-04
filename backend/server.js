@@ -1,6 +1,6 @@
 "use strict";
 const connectDB = require("./config/db");
-const socket = require("socket.io");
+
 //const cors = require("cors");
 
 //dotenv config
@@ -15,9 +15,11 @@ const profileRoutes = require("./routes/profileRoute");
 const keys = require("./config/keys");
 const passport = require("passport");
 const session = require("express-session");
+const socketConnect = require("./config/io");
 
 //Load Express
 const express = require("express");
+const { isValidObjectId } = require("mongoose");
 const app = express();
 
 //connect database
@@ -67,52 +69,4 @@ const server = app.listen(
     mode on port ${PORT}`)
 );
 
-// //Creates socket io server
-const io = socket(server);
-const users = {};
-
-const socketToRoom = {};
-
-io.on("connection", (socket) => {
-  socket.on("join room", (roomID) => {
-    if (users[roomID]) {
-      const length = users[roomID].length;
-      if (length === 2) {
-        socket.emit("room full");
-        console.log("room full");
-        return;
-      }
-      users[roomID].push(socket.id);
-    } else {
-      users[roomID] = [socket.id];
-    }
-    socketToRoom[socket.id] = roomID;
-    const usersInThisRoom = users[roomID].filter((id) => id !== socket.id);
-
-    socket.emit("all users", usersInThisRoom);
-  });
-
-  socket.on("sending signal", (payload) => {
-    io.to(payload.userToSignal).emit("user joined", {
-      signal: payload.signal,
-      callerID: payload.callerID,
-    });
-  });
-
-  socket.on("returning signal", (payload) => {
-    io.to(payload.callerID).emit("receiving returned signal", {
-      signal: payload.signal,
-      id: socket.id,
-    });
-  });
-
-  socket.on("disconnect", () => {
-    const roomID = socketToRoom[socket.id];
-    let room = users[roomID];
-    if (room) {
-      room = room.filter((id) => id !== socket.id);
-      users[roomID] = room;
-    }
-    socket.broadcast.emit("user left", socket.id);
-  });
-});
+socketConnect(server);

@@ -8,7 +8,7 @@ import MicOffIcon from "@material-ui/icons/MicOff";
 import VideocamIcon from "@material-ui/icons/Videocam";
 import VideocamOffIcon from "@material-ui/icons/VideocamOff";
 import ChatIcon from "@material-ui/icons/Chat";
-import ChatBox from "./ChatBox";
+import SocketChat from "../video-chat-stuff/SocketChat";
 
 const Container = styled.div`
   padding: 20px;
@@ -53,10 +53,19 @@ const Room = (props) => {
   const [tracky, setTracky] = useState({});
   const [chatToggle, setChatToggle] = useState(false);
   var track;
-  const [userDetails, setUserDetails] = useState(null);
-  const [messages, setMessages] = useState([]);
+  //const [userDetails, setUserDetails] = useState(null);
+  //const [messages, setMessages] = useState([]);
 
   const roomID = props.match.params.roomID;
+
+  // useEffect(() => {
+  //   return () => {
+  //     socketRef.current.off("user joined", []);
+  //     socketRef.current.off("all users", []);
+  //     socketRef.current.off("receiving returned signal", []);
+  //     socketRef.current.off("user left", 0);
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (share) {
@@ -69,12 +78,14 @@ const Room = (props) => {
   }, [share, tracky, peers]);
 
   useEffect(() => {
-    setUserDetails({ name: "Daniel" });
+    //setUserDetails({ name: "Daniel" });
     socketRef.current = io.connect("/");
     navigator.mediaDevices
       .getUserMedia({ video: videoConstraints, audio: true })
       .then((stream) => {
-        userVideo.current.srcObject = stream;
+        if (userVideo.current !== undefined) {
+          userVideo.current.srcObject = stream;
+        }
         userStream.current = stream;
 
         //console.log(userVideo.current.srcObject);
@@ -83,15 +94,15 @@ const Room = (props) => {
         socketRef.current.on("all users", (users) => {
           const peers = [];
 
-          users.forEach((userID) => {
-            const peer = createPeer(userID, socketRef.current.id, stream);
+          users.forEach((user) => {
+            const peer = createPeer(user.id, socketRef.current.id, stream);
             peersRef.current.push({
-              peerID: userID,
+              peerID: user.id,
               peer,
             });
 
             peers.push({
-              peerID: userID,
+              peerID: user.id,
               peer,
             });
           });
@@ -277,7 +288,14 @@ const Room = (props) => {
 
   //Force disconnect
   function userLeft() {
-    socketRef.current.destroy();
+    //Stop audio and video tracks
+    userVideo.current.srcObject.getTracks().forEach((track) => {
+      track.stop();
+    });
+    //Disconnect socket
+    console.log(socketRef.current);
+    socketRef.current.disconnect();
+    //Navigate to rooms
     props.history.push("/room");
   }
 
@@ -304,10 +322,16 @@ const Room = (props) => {
       )}
       <CallIcon onClick={userLeft} />
       <ChatIcon onClick={chatHandle}></ChatIcon>
-      <ChatBox
-        chatToggle={chatToggle}
-        closeDrawer={() => chatHandle(false)}
-      ></ChatBox>
+      {socketRef.current !== undefined && roomID !== undefined ? (
+        <SocketChat
+          chatToggle={chatToggle}
+          chatHandle={chatHandle}
+          socketRef={socketRef}
+          roomID={roomID}
+        />
+      ) : (
+        <p></p>
+      )}
     </Container>
   );
 };
