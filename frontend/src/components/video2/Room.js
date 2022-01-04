@@ -288,11 +288,14 @@ const Room = (props) => {
 
   //Force disconnect
   function userLeft() {
-    socketRef.current.off("user joined", []);
-    socketRef.current.off("all users", []);
-    socketRef.current.off("receiving returned signal", []);
-    socketRef.current.off("user left", 0);
-    socketRef.current.destroy();
+    //Stop audio and video tracks
+    userVideo.current.srcObject.getTracks().forEach((track) => {
+      track.stop();
+    });
+    //Disconnect socket
+    console.log(socketRef.current);
+    socketRef.current.disconnect();
+    //Navigate to rooms
     props.history.push("/room");
   }
 

@@ -100,7 +100,7 @@ function Chat(props) {
                         {getMessageDateOrTime(chatDetails.date)}
                       </span>
                     </div>
-                    {console.log(chatDetails)}
+
                     <p key={uuid()} className="actual-message">
                       {chatDetails.content}
                     </p>
@@ -116,7 +116,7 @@ function Chat(props) {
                         {getMessageDateOrTime(chatDetails.date)}
                       </span>
                     </div>
-                    {console.log(chatDetails)}
+
                     <p key={uuid()} className="actual-message">
                       {chatDetails.content}
                     </p>

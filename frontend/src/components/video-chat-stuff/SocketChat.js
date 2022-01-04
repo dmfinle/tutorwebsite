@@ -1,7 +1,4 @@
-//chat stuff
-import Form from "./UsernameForm";
 import Chat from "./Chat";
-import io from "socket.io-client";
 import immer from "immer";
 import { useSelector } from "react-redux";
 import React, { useState, useRef, useEffect } from "react";
@@ -29,7 +26,6 @@ function SocketChat(props) {
   }, [messages]);
 
   function sendMessage() {
-    console.log(props.socketRef.current);
     const payload = {
       content: message,
       to: currentChat.isChannel ? currentChat.chatName : currentChat.receiverId,
@@ -56,32 +52,11 @@ function SocketChat(props) {
     setMessages(newMessages);
   }
 
-  // function joinRoom(room) {
-  //   const newConnectedRooms = immer(connectedRooms, (draft) => {
-  //     draft.push(room);
-  //   });
-  //   props.socketRef.current.emit("join room2", room, (messages) =>
-  //     roomJoinCallback(messages, room)
-  //   );
-  //   setConnectedRooms(newConnectedRooms);
-  // }
-
-  // function toggleChat(currentChat) {
-  //   if (!messages[currentChat.chatName]) {
-  //     const newMessages = immer(messages, (draft) => {
-  //       draft[currentChat.chatName] = [];
-  //     });
-  //     setMessages(newMessages);
-  //   }
-  //   setCurrentChat(currentChat);
-  // }
-
-  function connect2() {
+  function chatConnect() {
     setUsername(auth.user.email);
     setConnected(true);
-    // socketRef.current = io.connect("/");
-    console.log(messages[currentChat.chatName]);
-    props.socketRef.current.emit("join room2", props.roomID, (messages) =>
+
+    props.socketRef.current.emit("join chat room", props.roomID, (messages) =>
       roomJoinCallback(messages, props.roomID)
     );
     props.socketRef.current.on("new user", (allUsers) => {
@@ -118,7 +93,7 @@ function SocketChat(props) {
     );
   } else {
     messages[currentChat.chatName] = [];
-    connect2();
+    chatConnect();
   }
 
   return <div className="App">{body}</div>;
