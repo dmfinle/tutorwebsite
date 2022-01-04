@@ -6,12 +6,6 @@ import immer from "immer";
 import { useSelector } from "react-redux";
 import React, { useState, useRef, useEffect } from "react";
 
-const initialMessagesState = {
-  general: [],
-  random: [],
-  jokes: [],
-  javascript: [],
-};
 function SocketChat(props) {
   const [username, setUsername] = useState("");
   const [connected, setConnected] = useState(false);
@@ -20,7 +14,7 @@ function SocketChat(props) {
     chatName: props.roomID,
     receiverId: "",
   });
-  const [connectedRooms, setConnectedRooms] = useState([props.roomID]);
+
   const [allUsers, setAllUsers] = useState([]);
   const [messages, setMessages] = useState({});
   const [message, setMessage] = useState("");

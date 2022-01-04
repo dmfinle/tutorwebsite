@@ -104,16 +104,6 @@ io.on("connection", (socket) => {
     io.emit("new user", users[roomID]);
   });
 
-  // //chat stuff
-  // socket.on("join server", (username) => {
-  //   const user = {
-  //     username,
-  //     id: socket.id,
-  //   };
-  //   users2.push(user);
-  //   io.emit("new user", users2);
-  // });
-
   //chat stuff
   socket.on("join room2", (roomName, cb) => {
     socket.join(roomName);
@@ -182,10 +172,4 @@ io.on("connection", (socket) => {
     console.log(messages);
     io.emit("new user", users[roomID]);
   });
-
-  // //chat stuff
-  // socket.on("disconnect", () => {
-  //   users2 = users2.filter((u) => u.id !== socket.id);
-  //   io.emit("new user", users2);
-  // });
 });
