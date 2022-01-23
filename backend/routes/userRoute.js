@@ -22,6 +22,12 @@ router.get(
   userController.currentUser
 );
 
+router.get(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  userController.getUserById
+);
+
 // //Default catch route
 // router.get("*", (req, res, next) => {
 //   res.status(404);

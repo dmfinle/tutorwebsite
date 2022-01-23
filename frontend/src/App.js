@@ -9,9 +9,15 @@ import PrivateRoute from "./components/common/PrivateRoute";
 import NavBar from "./components/layout/NavBar";
 import Profile from "./components/user/Profile";
 import CreateProfile from "./components/user/CreateProfile";
+import Tutor from "./components/searching/Tutor";
 
-import CreateRoom from "./components/video2/CreateRoom";
-import Room from "./components/video2/Room";
+//Video Room
+import CreateRoom from "./components/video-stream/CreateRoom";
+import Room from "./components/video-stream/Room";
+
+//Messenger
+import Messenger from "./components/messenger/Messenger";
+
 //Css
 import "./App.css";
 
@@ -71,6 +77,8 @@ const App = ({ classes }) => {
             <PrivateRoute exact path="/profile/new" component={CreateProfile} />
             <PrivateRoute path="/room" exact component={CreateRoom} />
             <PrivateRoute path="/room/:roomID" component={Room} />
+            <PrivateRoute exact path="/messenger" component={Messenger} />
+            <Route exact path="/tutors" component={Tutor} />
           </Switch>
         </main>
       </div>

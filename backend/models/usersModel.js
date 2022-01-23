@@ -34,6 +34,10 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  profilePicture: {
+    type: String,
+    default: "",
+  },
   date: {
     type: Date,
     default: Date.now,

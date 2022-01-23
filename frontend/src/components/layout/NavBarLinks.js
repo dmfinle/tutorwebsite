@@ -9,6 +9,7 @@ import AddIcon from "@material-ui/icons/Add";
 import LockIcon from "@material-ui/icons/LockOutlined";
 import CameraRollOutlined from "@material-ui/icons/CameraRollOutlined";
 import SearchIcon from "@material-ui/icons/Search";
+import MessageIcon from "@material-ui/icons/Message";
 import InfoIcon from "@material-ui/icons/Info";
 import "./layout.css";
 
@@ -26,7 +27,7 @@ export const authLinks = (
         <ListItemText primary="Profile" />
       </ListItem>
     </Link>
-    <Link to="/profiles" className="link">
+    <Link to="/tutors" className="link">
       <ListItem button>
         <ListItemIcon>
           <SearchIcon />
@@ -40,6 +41,14 @@ export const authLinks = (
           <CameraRollOutlined />
         </ListItemIcon>
         <ListItemText primary="Create a Room" />
+      </ListItem>
+    </Link>
+    <Link to="/messenger" className="link">
+      <ListItem button>
+        <ListItemIcon>
+          <MessageIcon />
+        </ListItemIcon>
+        <ListItemText primary="Messages" />
       </ListItem>
     </Link>
   </React.Fragment>

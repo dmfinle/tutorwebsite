@@ -10,7 +10,58 @@ const socketConnect = async (server) => {
   const messages = {};
   const socketToRoom = {};
 
-  io.on("connection", (socket) => {
+  let userMessages = [];
+
+  const addUser = (userId, socketId) => {
+    !userMessages.some((user) => user.userId === userId) &&
+      userMessages.push({ userId, socketId });
+  };
+
+  const removeUser = (socketId) => {
+    userMessages = userMessages.filter((user) => user.socketId !== socketId);
+  };
+
+  const getUser = (userId) => {
+    return userMessages.find((user) => user.userId === userId);
+  };
+
+  const videoChat = io.of("/video-chat");
+  const messageChat = io.of("/message-chat");
+
+  //Instant message io
+  messageChat.on("connection", (socket) => {
+    console.log("a user joined");
+
+    socket.on("addUser", (userId) => {
+      addUser(userId, socket.id);
+      messageChat.emit("getUsers", userMessages);
+    });
+
+    socket.on("sendMessage", ({ senderId, receiverId, text }) => {
+      const user = getUser(receiverId);
+
+      messageChat.to(user?.socketId).emit("getMessage", {
+        senderId,
+        text,
+      });
+    });
+
+    socket.on("userTyping", ({ senderId, receiverId, typing }) => {
+      const user = getUser(receiverId);
+      messageChat.to(user?.socketId).emit("receivingTyping", {
+        typing,
+      });
+    });
+
+    socket.on("disconnect", () => {
+      console.log("a user disconnected");
+      removeUser(socket.id);
+      messageChat.emit("getUsers", userMessages);
+    });
+  });
+
+  //Video streaming and live chat io
+  videoChat.on("connection", (socket) => {
     socket.on("join room", (roomID) => {
       const user = {
         id: socket.id,
@@ -32,7 +83,7 @@ const socketConnect = async (server) => {
       );
 
       socket.emit("all users", usersInThisRoom);
-      io.emit("new user", users[roomID]);
+      videoChat.emit("new user", users[roomID]);
     });
 
     socket.on("join chat room", (roomName, cb) => {
@@ -72,14 +123,14 @@ const socketConnect = async (server) => {
     );
 
     socket.on("sending signal", (payload) => {
-      io.to(payload.userToSignal).emit("user joined", {
+      videoChat.to(payload.userToSignal).emit("user joined", {
         signal: payload.signal,
         callerID: payload.callerID,
       });
     });
 
     socket.on("returning signal", (payload) => {
-      io.to(payload.callerID).emit("receiving returned signal", {
+      videoChat.to(payload.callerID).emit("receiving returned signal", {
         signal: payload.signal,
         id: socket.id,
       });
@@ -97,7 +148,7 @@ const socketConnect = async (server) => {
       if (users[roomID].length === 0) {
         delete messages[roomID];
       }
-      io.emit("new user", users[roomID]);
+      videoChat.emit("new user", users[roomID]);
     });
   });
 };

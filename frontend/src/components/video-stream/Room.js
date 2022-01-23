@@ -8,7 +8,7 @@ import MicOffIcon from "@material-ui/icons/MicOff";
 import VideocamIcon from "@material-ui/icons/Videocam";
 import VideocamOffIcon from "@material-ui/icons/VideocamOff";
 import ChatIcon from "@material-ui/icons/Chat";
-import SocketChat from "../video-chat-stuff/SocketChat";
+import SocketChat from "../video-chat/SocketChat";
 
 const Container = styled.div`
   padding: 20px;
@@ -79,7 +79,7 @@ const Room = (props) => {
 
   useEffect(() => {
     //setUserDetails({ name: "Daniel" });
-    socketRef.current = io.connect("/");
+    socketRef.current = io.connect("/video-chat");
     navigator.mediaDevices
       .getUserMedia({ video: videoConstraints, audio: true })
       .then((stream) => {

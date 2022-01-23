@@ -10,6 +10,8 @@ dotenv.config();
 //Load Routes
 const userRoutes = require("./routes/userRoute");
 const profileRoutes = require("./routes/profileRoute");
+const conversationRoutes = require("./routes/conversationsRoute");
+const messageRoutes = require("./routes/messagesRoute");
 
 //Load authentication and environment variables
 const keys = require("./config/keys");
@@ -51,6 +53,8 @@ app.use(passport.session());
 //Define Routes
 app.use("/api/users", userRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/conversations", conversationRoutes);
+app.use("/api/messages", messageRoutes);
 // app.get("/api/join", (req, res) => {
 //   res.send({ link: uuid() });
 // });
