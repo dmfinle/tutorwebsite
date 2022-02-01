@@ -8,8 +8,16 @@ exports.newConvo = async (req, res) => {
   });
 
   try {
-    const savedConversation = await newConversation.save();
-    res.status(200).json(savedConversation);
+    const existingConvo = await Conversation.findOne({
+      members: { $all: [req.body.senderId, req.body.receiverId] },
+    });
+
+    if (existingConvo === null) {
+      const savedConversation = await newConversation.save();
+      res.status(200).json(savedConversation);
+    } else {
+      res.status(200).json(existingConvo);
+    }
   } catch (err) {
     res.status(500).json(err);
   }

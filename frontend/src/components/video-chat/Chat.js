@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Button, Drawer, Input } from "@material-ui/core";
 import { getMessageDateOrTime } from "../../utils/helper";
 // Import Styles
-import "../video-stream/style/chatDrawer.scss";
+import "./style/chatDrawer.css";
 
 // Import Icons
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";

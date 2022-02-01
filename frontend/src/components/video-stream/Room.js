@@ -236,7 +236,6 @@ const Room = (props) => {
     }
   }
 
-  //TODO very buggy. If sharing screen before user enters doesn't work.
   function shareScreen() {
     if (!share) {
       navigator.mediaDevices

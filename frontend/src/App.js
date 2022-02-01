@@ -10,6 +10,7 @@ import NavBar from "./components/layout/NavBar";
 import Profile from "./components/user/Profile";
 import CreateProfile from "./components/user/CreateProfile";
 import Tutor from "./components/searching/Tutor";
+import Jobs from "./components/jobs/Jobs";
 
 //Video Room
 import CreateRoom from "./components/video-stream/CreateRoom";
@@ -78,7 +79,7 @@ const App = ({ classes }) => {
             <PrivateRoute path="/room" exact component={CreateRoom} />
             <PrivateRoute path="/room/:roomID" component={Room} />
             <PrivateRoute exact path="/messenger" component={Messenger} />
-            <Route exact path="/tutors" component={Tutor} />
+            <Route exact path="/jobs" component={Jobs} />
           </Switch>
         </main>
       </div>

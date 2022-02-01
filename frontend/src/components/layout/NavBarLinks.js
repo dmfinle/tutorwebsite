@@ -11,6 +11,7 @@ import CameraRollOutlined from "@material-ui/icons/CameraRollOutlined";
 import SearchIcon from "@material-ui/icons/Search";
 import MessageIcon from "@material-ui/icons/Message";
 import InfoIcon from "@material-ui/icons/Info";
+import WorkIcon from "@mui/icons-material/WorkOutlined";
 import "./layout.css";
 
 const ListItemLink = (props) => {
@@ -49,6 +50,14 @@ export const authLinks = (
           <MessageIcon />
         </ListItemIcon>
         <ListItemText primary="Messages" />
+      </ListItem>
+    </Link>
+    <Link to="/jobs" className="link">
+      <ListItem button>
+        <ListItemIcon>
+          <WorkIcon />
+        </ListItemIcon>
+        <ListItemText primary="Job Postings" />
       </ListItem>
     </Link>
   </React.Fragment>

@@ -1,6 +1,8 @@
 import "./conversation.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Avatar from "@mui/material/Avatar";
+import { red } from "@mui/material/colors";
 
 export default function Conversation({ conversation, currentUser }) {
   const [user, setUser] = useState(null);
@@ -23,11 +25,17 @@ export default function Conversation({ conversation, currentUser }) {
   }, [currentUser, conversation]);
   return (
     <div className="conversation">
-      <img
-        className="conversationImg"
-        src={user?.profilePicture ? user.profilePicture : path}
-        alt=""
-      ></img>
+      {user?.profilePicture ? (
+        <img className="conversationImg" src={user.profilePicture} alt=""></img>
+      ) : (
+        <Avatar
+          className="conversationImg"
+          sx={{ bgcolor: red[500] }}
+          aria-label="recipe"
+        >
+          {`${user?.firstName.substr(0, 1) + user?.lastName.substr(0, 1)}`}
+        </Avatar>
+      )}
       <span className="conversationName">{user?.email}</span>
     </div>
   );
