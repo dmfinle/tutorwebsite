@@ -95,6 +95,7 @@ export default function Jobs(props) {
 
   return (
     <div>
+      Job postings
       {jobs.map((job) => (
         <div>
           <Card sx={{ minWidth: 275 }}>

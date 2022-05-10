@@ -9,6 +9,7 @@ import ProfileAbout from "./ProfileAbout";
 import { getCurrentProfile } from "../../redux/reducers/profileSlice";
 import { connect } from "react-redux";
 import "./profile.css";
+import JobPost from "./JobPost";
 
 class Profile extends Component {
   componentDidMount() {
@@ -33,6 +34,8 @@ class Profile extends Component {
       ) : (
         <div>
           <ProfileAbout profile={profile} />
+          Post a job
+          <JobPost></JobPost>
         </div>
       );
 
