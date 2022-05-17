@@ -19,6 +19,7 @@
     "immer": "^9.0.6",
     "jwt-decode": "^3.1.2",
     "react": "^17.0.2",
+    "react-ace": "^10.1.0",
     "react-dark-mode-toggle": "^0.2.0",
     "react-dom": "^17.0.2",
     "react-ga": "^3.3.0",

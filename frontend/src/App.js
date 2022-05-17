@@ -32,6 +32,7 @@ import { checkAuth } from "./utils/authPersist";
 // MUI imports
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import CodeEditor from "./components/compiler/CodeEditor";
 
 // Check for JWT for persistence
 if (localStorage.jwtToken) {
@@ -80,6 +81,7 @@ const App = ({ classes }) => {
             <PrivateRoute path="/room/:roomID" component={Room} />
             <PrivateRoute exact path="/messenger" component={Messenger} />
             <Route exact path="/jobs" component={Jobs} />
+            <Route exact path="/test" component={CodeEditor} />
           </Switch>
         </main>
       </div>
