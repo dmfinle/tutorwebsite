@@ -7,7 +7,13 @@ const CreateRoom = (props) => {
     props.history.push(`/room/${id}`);
   }
 
-  return <button onClick={create}> Create Room</button>;
+  return (
+    <div className="create-room-button">
+      <button className="create" onClick={create}>
+        Create Room
+      </button>
+    </div>
+  );
 };
 
 export default CreateRoom;

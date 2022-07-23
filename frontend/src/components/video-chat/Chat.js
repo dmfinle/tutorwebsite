@@ -93,9 +93,9 @@ function Chat(props) {
                   // displays message on right for your message
                   <div className="message-wrapper message-wrapper-right">
                     <div key={uuid()} className="message-title-wrapper">
-                      <h5 key={uuid()} className="message-name">
+                      {/* <h5 key={uuid()} className="message-name">
                         {chatDetails.sender}
-                      </h5>
+                      </h5> */}
                       <span key={uuid()} className="message-timestamp">
                         {getMessageDateOrTime(chatDetails.date)}
                       </span>

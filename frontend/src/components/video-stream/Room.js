@@ -1,3 +1,4 @@
+import "./room.css";
 import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
@@ -9,6 +10,8 @@ import VideocamIcon from "@material-ui/icons/Videocam";
 import VideocamOffIcon from "@material-ui/icons/VideocamOff";
 import ChatIcon from "@material-ui/icons/Chat";
 import SocketChat from "../video-chat/SocketChat";
+import { Button, Grid, IconButton } from "@mui/material";
+import CodeEditor from "../compiler/CodeEditor";
 
 const Container = styled.div`
   padding: 20px;
@@ -19,10 +22,11 @@ const Container = styled.div`
   flex-wrap: wrap;
 `;
 
-const StyledVideo = styled.video`
-  height: 70%;
-  width: 50%;
-`;
+// const StyledVideo = styled.video`
+//   height: 400px;
+//   width: 400px;
+//   // border: 10px inset gray;
+// `;
 
 const Video = (props) => {
   const ref = useRef();
@@ -33,12 +37,12 @@ const Video = (props) => {
     });
   }, [props.peer]);
 
-  return <StyledVideo playsInline autoPlay ref={ref} />;
+  return <video className={props.className} playsInline autoPlay ref={ref} />;
 };
 
 const videoConstraints = {
-  height: window.innerHeight / 2,
-  width: window.innerWidth / 2,
+  height: window.innerHeight,
+  width: window.innerWidth,
 };
 
 const Room = (props) => {
@@ -51,6 +55,7 @@ const Room = (props) => {
   const [camera, setCamera] = useState(true);
   const [share, setShare] = useState(false);
   const [tracky, setTracky] = useState({});
+  const [videoBool, setVideoBool] = useState(false); //boolean set to true if 2 people in call
   const [chatToggle, setChatToggle] = useState(false);
   var track;
   //const [userDetails, setUserDetails] = useState(null);
@@ -80,20 +85,20 @@ const Room = (props) => {
   useEffect(() => {
     //setUserDetails({ name: "Daniel" });
     socketRef.current = io.connect("/video-chat");
+
     navigator.mediaDevices
-      .getUserMedia({ video: videoConstraints, audio: true })
+      .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         if (userVideo.current !== undefined) {
           userVideo.current.srcObject = stream;
         }
         userStream.current = stream;
 
-        //console.log(userVideo.current.srcObject);
-
         socketRef.current.emit("join room", roomID);
-        socketRef.current.on("all users", (users) => {
+        socketRef.current.on("all users", (userInfo) => {
           const peers = [];
-
+          let users = userInfo.usersInThisRoom;
+          setVideoBool(userInfo.videoBool);
           users.forEach((user) => {
             const peer = createPeer(user.id, socketRef.current.id, stream);
             peersRef.current.push({
@@ -112,7 +117,7 @@ const Room = (props) => {
 
         socketRef.current.on("user joined", (payload) => {
           console.log("user joined");
-
+          setVideoBool(payload.videoBool);
           const peer = addPeer(payload.signal, payload.callerID, stream);
           peersRef.current.push({
             peerID: payload.callerID,
@@ -127,8 +132,10 @@ const Room = (props) => {
           item.peer.signal(payload.signal);
         });
 
-        socketRef.current.on("user left", (id) => {
+        socketRef.current.on("user left", (userInfo) => {
           console.log("user left");
+          setVideoBool(userInfo.videoBool);
+          let id = userInfo.id;
           const peerObj = peersRef.current.find((p) => p.peerID === id);
           if (peerObj) {
             peerObj.peer.destroy();
@@ -239,7 +246,13 @@ const Room = (props) => {
   function shareScreen() {
     if (!share) {
       navigator.mediaDevices
-        .getDisplayMedia({ cursor: true })
+        .getDisplayMedia({
+          cursor: true,
+          video: {
+            width: { ideal: 1280, max: 1920 },
+            height: { ideal: 720, max: 1080 },
+          },
+        })
         .then((stream) => {
           track = stream.getTracks()[0];
           userVideo.current.srcObject = stream;
@@ -277,11 +290,10 @@ const Room = (props) => {
     } else {
       userVideo.current.srcObject.getTracks()[0].stop();
 
-      setShare(false);
-
       userVideo.current.srcObject
         .getTracks()[0]
         .dispatchEvent(new Event("ended"));
+      setShare(false);
     }
   }
 
@@ -303,24 +315,75 @@ const Room = (props) => {
   }
 
   return (
-    <Container>
-      <button onClick={shareScreen}> Share Screen </button>
-      <StyledVideo ref={userVideo} autoPlay playsInline />
-      {peers.map((peer) => {
-        return <Video key={peer.peerID} peer={peer.peer} />;
-      })}
-      {mic ? (
-        <MicIcon onClick={micControl} />
-      ) : (
-        <MicOffIcon onClick={micControl} />
-      )}
-      {camera ? (
-        <VideocamIcon onClick={cameraControl} />
-      ) : (
-        <VideocamOffIcon onClick={cameraControl} />
-      )}
-      <CallIcon onClick={userLeft} />
-      <ChatIcon onClick={chatHandle}></ChatIcon>
+    <div className="video-components">
+      {/* <Container> */}
+      {/* <Grid container> */}
+      {/* <div className="main"> */}
+      {/* <div className="user-video"> */}
+      <div className="bottom">
+        <video
+          className={
+            videoBool
+              ? share
+                ? "peer-video"
+                : "flip peer-video"
+              : share
+              ? "user-video"
+              : "flip user-video"
+          }
+          ref={userVideo}
+          autoPlay
+          playsInline
+        />
+        {peers.map((peer) => {
+          return (
+            <Video
+              className={videoBool ? "user-video" : "peer-video"}
+              key={peer.peerID}
+              peer={peer.peer}
+            />
+          );
+        })}
+        {/* </div> */}
+        {/* </Grid> */}
+        <div className="video-buttons">
+          <Grid container spacing={1}>
+            <IconButton size="medium">
+              <Button variant="outlined" onClick={shareScreen}>
+                {!share ? "Share Screen" : "Sharing"}
+              </Button>
+            </IconButton>
+            {mic ? (
+              <IconButton size="medium">
+                <MicIcon fontSize="medium" onClick={micControl} />
+              </IconButton>
+            ) : (
+              <IconButton size="medium">
+                <MicOffIcon fontSize="medium" onClick={micControl} />
+              </IconButton>
+            )}
+            {camera ? (
+              <IconButton size="medium">
+                <VideocamIcon fontSize="medium" onClick={cameraControl} />
+              </IconButton>
+            ) : (
+              <IconButton size="medium">
+                <VideocamOffIcon fontSize="medium" onClick={cameraControl} />
+              </IconButton>
+            )}
+            <IconButton size="medium">
+              <CallIcon fontSize="inherit" onClick={userLeft} />
+            </IconButton>
+            <IconButton size="medium">
+              <ChatIcon fontSize="inherit" onClick={chatHandle}></ChatIcon>
+            </IconButton>
+          </Grid>
+        </div>
+      </div>
+      {/* <div> */}
+      {/* <StyledVideo ref={userVideo} autoPlay playsInline /> */}
+      {/* </div> */}
+      {/* <CodeEditor /> */}
       {socketRef.current !== undefined && roomID !== undefined ? (
         <SocketChat
           chatToggle={chatToggle}
@@ -331,7 +394,8 @@ const Room = (props) => {
       ) : (
         <p></p>
       )}
-    </Container>
+      {/* </Container> */}
+    </div>
   );
 };
 

@@ -52,41 +52,43 @@ if (localStorage.jwtToken) {
   }
 }
 
-const styles = (theme) => ({
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    height: "100vh",
-    overflow: "auto",
-  },
-  appBarSpacer: theme.mixins.toolbar,
-});
+// const styles = (theme) => ({
+//   content: {
+//     flexGrow: 1,
+//     padding: theme.spacing(3),
+//     height: "100vh",
+//     overflow: "auto",
+//   },
+//   appBarSpacer: theme.mixins.toolbar,
+// });
 
-const App = ({ classes }) => {
+const App = (/*{ classes }*/) => {
   return (
     <Router>
-      <div className="App">
-        <CssBaseline />
-        <NavBar />
-        <main className={classes.content}>
-          <div className={classes.appBarSpacer} />
-
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/register" component={Register} />
-            <Route exact path="/login" component={Login} />
-            <PrivateRoute exact path="/profile" component={Profile} />
-            <PrivateRoute exact path="/profile/new" component={CreateProfile} />
-            <PrivateRoute path="/room" exact component={CreateRoom} />
-            <PrivateRoute path="/room/:roomID" component={Room} />
-            <PrivateRoute exact path="/messenger" component={Messenger} />
-            <Route exact path="/jobs" component={Jobs} />
-            <Route exact path="/test" component={CodeEditor} />
-          </Switch>
-        </main>
+      {/* <div className="App"> */}
+      {/* <CssBaseline /> */}
+      <NavBar />
+      {/* </div><main className={classes.content}> */}
+      {/* <div className={classes.appBarSpacer} /> */}
+      <div className="adjust">
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/register" component={Register} />
+          <Route exact path="/login" component={Login} />
+          <PrivateRoute exact path="/profile" component={Profile} />
+          <PrivateRoute exact path="/profile/new" component={CreateProfile} />
+          <PrivateRoute path="/room" exact component={CreateRoom} />
+          <PrivateRoute path="/room/:roomID" component={Room} />
+          <PrivateRoute exact path="/messenger" component={Messenger} />
+          <PrivateRoute exact path="/jobs" component={Jobs} />
+          <Route exact path="/test" component={CodeEditor} />
+        </Switch>
       </div>
+      {/* </main> */}
+      {/* </div> */}
     </Router>
   );
 };
 
-export default withStyles(styles)(App);
+// export default withStyles(styles)(App);
+export default App;

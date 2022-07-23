@@ -81,8 +81,17 @@ const socketConnect = async (server) => {
       const usersInThisRoom = users[roomID].filter(
         (user) => user.id !== socket.id
       );
-
-      socket.emit("all users", usersInThisRoom);
+      let videoBool;
+      if (usersInThisRoom.length === 1) {
+        videoBool = true;
+      } else {
+        videoBool = false;
+      }
+      const usersInThisRoomInfo = {
+        usersInThisRoom: usersInThisRoom,
+        videoBool: videoBool,
+      };
+      socket.emit("all users", usersInThisRoomInfo);
       videoChat.emit("new user", users[roomID]);
     });
 
@@ -126,6 +135,7 @@ const socketConnect = async (server) => {
       videoChat.to(payload.userToSignal).emit("user joined", {
         signal: payload.signal,
         callerID: payload.callerID,
+        videoBool: true,
       });
     });
 
@@ -144,7 +154,11 @@ const socketConnect = async (server) => {
         room = room.filter((user) => user.id !== socket.id);
         users[roomID] = room;
       }
-      socket.broadcast.emit("user left", socket.id);
+      const userInfo = {
+        id: socket.id,
+        videoBool: false,
+      };
+      socket.broadcast.emit("user left", userInfo);
       if (users[roomID].length === 0) {
         delete messages[roomID];
       }
