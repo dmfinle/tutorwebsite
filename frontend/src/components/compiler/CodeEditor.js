@@ -1,6 +1,6 @@
 import "./codeeditor.css";
 
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 
 import {
@@ -10,6 +10,7 @@ import {
   FormControl,
   Box,
   Button,
+  TextField,
 } from "@mui/material";
 
 //Ace imports
@@ -23,8 +24,9 @@ import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/theme-terminal";
 import "ace-builds/src-noconflict/theme-tomorrow_night_blue";
 import "ace-builds/src-noconflict/theme-clouds";
+import { io } from "socket.io-client";
 
-export default function CodeEditor() {
+export default function CodeEditor({ props }) {
   // const langChoice = [
   //   { id: 45, name: "Assembly (NASM 2.14.02)" },
   //   { id: 46, name: "Bash (5.0.0)" },
@@ -75,7 +77,7 @@ export default function CodeEditor() {
   //   { id: 84, name: "Visual Basic.Net (vbnc 0.0.0.5943)" },
   // ];
 
-  //Update url at some point TODO
+  //Update url at some point TODO. URL for judge compiler
   const baseURL = "http://0.0.0.0:2358";
 
   const cppcode = `#include <iostream>
@@ -95,43 +97,160 @@ using namespace std;
 }`;
   const pythoncode = `def execute(): \n\t print "Welcome to EngiNearU" \nexecute()`;
 
+  const roomID = props.match.params.roomID;
+
+  const socketRef = useRef();
   const [body, setBody] = useState(cppcode);
   const [lang, setLang] = useState(54);
   const [language, setLanguage] = useState("c_cpp");
   const [theme, setTheme] = useState("monokai");
   const [stdin, setStdin] = useState("");
   const [executing, setExecuting] = useState(false);
-  const [stdout, setStdout] = useState("");
+  const [focus, setFocus] = useState(false);
+  const [stdout, setStdout] = useState(
+    "Remove this later\nHuge\nTest\nOverflow\nadcnnnmmmmmmmm"
+  );
 
-  const onChangeHandler = (e) => {
+  const langOnChange = (e) => {
+    let language;
+    console.log("send language");
     switch (e.target.value) {
       case 54:
-        setBody(cppcode);
-        setLanguage("c_cpp");
-        break;
       case 50:
-        setBody(ccode);
-        setLanguage("c_cpp");
+        language = "c_cpp";
         break;
       case 62:
-        setBody(javacode);
-        setLanguage("java");
+        language = "java";
         break;
       case 71:
-        setBody(pythoncode);
-        setLanguage("python");
+        language = "python";
         break;
       default:
-        setBody("");
     }
+    setLanguage(language);
     setLang(e.target.value);
+    const info = {
+      body,
+      lang: e.target.value,
+      language: language,
+      theme,
+      stdin,
+      executing,
+      focus,
+      stdout,
+    };
+    socketRef.current.emit("sendMessage", {
+      info,
+    });
   };
 
+  useEffect(() => {
+    socketRef.current = io.connect("/editor");
+    socketRef.current.emit("addUser", roomID);
+    socketRef.current.on("allUsers", (data) => {
+      console.log("receiving message");
+      console.log(data.stdout);
+      if (data?.body !== undefined) setBody(data.body);
+      if (data?.lang !== undefined) setLang(data.lang);
+      if (data?.language !== undefined) setLanguage(data.language);
+      if (data?.theme !== undefined) setTheme(data.theme);
+      if (data?.stdin !== undefined) setStdin(data.stdin);
+      if (data?.executing !== undefined) setExecuting(data.executing);
+      if (data?.focus !== undefined) setFocus(data.focus);
+      if (data?.stdout !== undefined) setStdout(data.stdout);
+    });
+  }, []);
+
+  const bodyOnChange = (e) => {
+    setBody(e);
+    console.log("send body");
+    const info = {
+      body: e,
+      lang,
+      language,
+      theme,
+      stdin,
+      executing,
+      focus,
+      stdout,
+    };
+    socketRef.current.emit("sendMessage", {
+      info,
+    });
+  };
+
+  const themeOnChange = (e) => {
+    setTheme(e.target.value);
+    console.log("send theme");
+    const info = {
+      body,
+      lang,
+      language,
+      theme: e.target.value,
+      stdin,
+      executing,
+      focus,
+      stdout,
+    };
+    socketRef.current.emit("sendMessage", {
+      info,
+    });
+  };
+
+  const stdinOnChange = (e) => {
+    setStdin(e.target.value);
+    console.log("send stdin");
+    const info = {
+      body,
+      lang,
+      language,
+      theme,
+      stdin: e.target.value,
+      executing,
+      focus,
+      stdout,
+    };
+    socketRef.current.emit("sendMessage", {
+      info,
+    });
+  };
+
+  const focusOnChange = (e) => {
+    setFocus(!focus);
+    console.log("send focus");
+    const info = {
+      body,
+      lang,
+      language,
+      theme,
+      stdin,
+      executing,
+      focus: !focus,
+      stdout,
+    };
+    socketRef.current.emit("sendMessage", {
+      info,
+    });
+  };
   const sleep = (ms) => new Promise((r) => setTimeout(r, 2000));
 
   const runCode = async (e) => {
     e.preventDefault();
     setExecuting(true);
+    console.log("send execute");
+    let info = {
+      body,
+      lang,
+      language,
+      theme,
+      stdin,
+      executing: true,
+      focus,
+      stdout,
+    };
+    socketRef.current.emit("sendMessage", {
+      info,
+    });
     // setStdout("Running Code");
     let data = {
       source_code: body,
@@ -165,38 +284,78 @@ using namespace std;
             .then((result) => {
               console.log("result");
               console.log(result);
-              // loading complete
-              setExecuting(false);
+              let ioresult;
               if (result.data.stdout) {
-                setStdout(result.data.stdout);
+                ioresult = result.data.stdout;
                 // outputText.innerHTML += `Results :\n${output}\nExecution Time : ${jsonGetSolution.time} Secs\nMemory used : ${jsonGetSolution.memory} bytes`;
               } else if (result.data.stderr) {
-                setStdout(result.data.stderr);
-                // outputText.innerHTML += `\n Error :${error}`;
+                ioresult = result.data.stderr;
               } else {
-                setStdout(result.data.compilation_error);
+                ioresult = result.data.compile_output;
               }
-              // setStdout(result.data.stdout);
+              setStdout(ioresult);
+              // loading complete
+              setExecuting(false);
+              info = {
+                body,
+                lang,
+                language,
+                theme,
+                stdin,
+                executing: false,
+                focus,
+                stdout: ioresult,
+              };
+              console.log(ioresult);
+              socketRef.current.emit("sendMessage", {
+                info,
+              });
             })
             .catch((err) => {
               setExecuting(false);
+              info = {
+                body,
+                lang,
+                language,
+                theme,
+                stdin,
+                executing: false,
+                focus,
+                stdout,
+              };
+              socketRef.current.emit("sendMessage", {
+                info,
+              });
               console.log("err", err);
             });
         });
       })
       .catch((err) => {
         setExecuting(false);
+        info = {
+          body,
+          lang,
+          language,
+          theme,
+          stdin,
+          executing: false,
+          focus,
+          stdout,
+        };
+        socketRef.current.emit("sendMessage", {
+          info,
+        });
         console.log("err", err);
       });
   };
 
   return (
-    <div>
+    <div className="main">
       <div id="editor">
         <AceEditor
           mode={language}
           theme={theme}
-          onChange={(e) => setBody(e)}
+          onChange={bodyOnChange}
           fontSize={16}
           value={body}
           name="editor"
@@ -205,23 +364,21 @@ using namespace std;
           // enableBasicAutocompletion={true}
           // enableSnippets={true}
           // enableLiveAutocompletion={false}
-          height="50%"
-          width="40%"
+          height="100%"
+          width="50%"
           editorProps={{ $blockScrolling: false }}
         />
       </div>
-      <textarea
-        id="stdin"
-        onChange={(e) => setStdin(e.target.value)}
-      ></textarea>
-      <Box sx={{ minWidth: 120 }}>
+
+      <Box sx={{ minWidth: 120, display: "flex", justifyContent: "flex-end" }}>
         <FormControl>
           <InputLabel id="language">Language</InputLabel>
           <Select
+            sx={{ backgroundColor: "white" }}
             id="language"
             value={lang}
             label="Language"
-            onChange={onChangeHandler}
+            onChange={langOnChange}
           >
             <MenuItem value={54}>C++</MenuItem>
             <MenuItem value={50}>C</MenuItem>
@@ -232,10 +389,11 @@ using namespace std;
         <FormControl>
           <InputLabel id="theme">Editor Theme</InputLabel>
           <Select
+            sx={{ backgroundColor: "white" }}
             id="theme"
             value={theme}
             label="Theme"
-            onChange={(e) => setTheme(e.target.value)}
+            onChange={themeOnChange}
           >
             <MenuItem value={"monokai"}>Monokai</MenuItem>
             <MenuItem value={"clouds"}>Clouds</MenuItem>
@@ -245,6 +403,9 @@ using namespace std;
             </MenuItem>
           </Select>
         </FormControl>
+        <Button variant="contained" onClick={focusOnChange}>
+          {focus ? "Hide Stdin" : "Show Stdin"}
+        </Button>
         {!executing ? (
           <Button variant="contained" onClick={runCode}>
             Execute
@@ -256,14 +417,26 @@ using namespace std;
         )}
       </Box>
 
-      <div className="stdout">{stdout}</div>
+      <div className="stdout">
+        {stdout}
 
-      {/* <iframe
-        frameBorder="0"
-        height="600px"
-        src="https://onecompiler.com/embed/"
-        width="100%"
-      ></iframe> */}
+        <p className={focus ? "toggle-visible" : "toggle-hidden"}>
+          <TextField
+            sx={{
+              backgroundColor: "white",
+              width: "500px",
+              overflow: "true",
+            }}
+            // id="stdin"
+            multiline
+            placeholder="Input stdin into program 1 item per line"
+            maxRows={1}
+            size="medium"
+            value={stdin}
+            onChange={stdinOnChange}
+          />
+        </p>
+      </div>
     </div>
   );
 }

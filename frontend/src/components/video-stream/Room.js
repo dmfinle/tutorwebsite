@@ -6,12 +6,15 @@ import styled from "styled-components";
 import CallIcon from "@material-ui/icons/CallEnd";
 import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
+import FullscreenIcon from "@material-ui/icons/Fullscreen";
+import { PictureInPicture } from "@material-ui/icons";
 import VideocamIcon from "@material-ui/icons/Videocam";
 import VideocamOffIcon from "@material-ui/icons/VideocamOff";
 import ChatIcon from "@material-ui/icons/Chat";
 import SocketChat from "../video-chat/SocketChat";
 import { Button, Grid, IconButton } from "@mui/material";
 import CodeEditor from "../compiler/CodeEditor";
+import { CloseFullscreenOutlined } from "@mui/icons-material";
 
 const Container = styled.div`
   padding: 20px;
@@ -21,16 +24,9 @@ const Container = styled.div`
   margin: auto;
   flex-wrap: wrap;
 `;
-
-// const StyledVideo = styled.video`
-//   height: 400px;
-//   width: 400px;
-//   // border: 10px inset gray;
-// `;
-
+let ref;
 const Video = (props) => {
-  const ref = useRef();
-
+  ref = useRef();
   useEffect(() => {
     props.peer.on("stream", (stream) => {
       ref.current.srcObject = stream;
@@ -57,20 +53,16 @@ const Room = (props) => {
   const [tracky, setTracky] = useState({});
   const [videoBool, setVideoBool] = useState(false); //boolean set to true if 2 people in call
   const [chatToggle, setChatToggle] = useState(false);
+  const [fullscreen, setFullScreen] = useState(false);
   var track;
   //const [userDetails, setUserDetails] = useState(null);
   //const [messages, setMessages] = useState([]);
 
   const roomID = props.match.params.roomID;
 
-  // useEffect(() => {
-  //   return () => {
-  //     socketRef.current.off("user joined", []);
-  //     socketRef.current.off("all users", []);
-  //     socketRef.current.off("receiving returned signal", []);
-  //     socketRef.current.off("user left", 0);
-  //   };
-  // }, []);
+  useEffect(() => {
+    socketRef.current = io.connect("/video-chat");
+  }, []);
 
   useEffect(() => {
     if (share) {
@@ -83,9 +75,12 @@ const Room = (props) => {
   }, [share, tracky, peers]);
 
   useEffect(() => {
-    //setUserDetails({ name: "Daniel" });
-    socketRef.current = io.connect("/video-chat");
+    if (fullscreen && document.pictureInPictureElement) {
+      document.exitPictureInPicture();
+    }
+  }, [fullscreen]);
 
+  useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
@@ -314,87 +309,148 @@ const Room = (props) => {
     setChatToggle(!chatToggle);
   }
 
+  const pipHandle = () => {
+    // console.log(ref);
+    if (document.pictureInPictureElement) {
+      document.exitPictureInPicture();
+    } else if (!fullscreen && !videoBool && !document.pictureInPictureElement) {
+      userVideo?.current?.requestPictureInPicture();
+    } else if (!fullscreen && videoBool && !document.pictureInPictureElement) {
+      // ref?.current.requestPictureInPicture();
+      ref?.current?.requestPictureInPicture();
+    }
+  };
+
   return (
-    <div className="video-components">
-      {/* <Container> */}
-      {/* <Grid container> */}
-      {/* <div className="main"> */}
-      {/* <div className="user-video"> */}
-      <div className="bottom">
-        <video
-          className={
-            videoBool
-              ? share
-                ? "peer-video"
-                : "flip peer-video"
-              : share
-              ? "user-video"
-              : "flip user-video"
-          }
-          ref={userVideo}
-          autoPlay
-          playsInline
-        />
-        {peers.map((peer) => {
-          return (
-            <Video
-              className={videoBool ? "user-video" : "peer-video"}
-              key={peer.peerID}
-              peer={peer.peer}
-            />
-          );
-        })}
-        {/* </div> */}
-        {/* </Grid> */}
-        <div className="video-buttons">
-          <Grid container spacing={1}>
-            <IconButton size="medium">
-              <Button variant="outlined" onClick={shareScreen}>
-                {!share ? "Share Screen" : "Sharing"}
-              </Button>
-            </IconButton>
-            {mic ? (
-              <IconButton size="medium">
-                <MicIcon fontSize="medium" onClick={micControl} />
-              </IconButton>
-            ) : (
-              <IconButton size="medium">
-                <MicOffIcon fontSize="medium" onClick={micControl} />
-              </IconButton>
-            )}
-            {camera ? (
-              <IconButton size="medium">
-                <VideocamIcon fontSize="medium" onClick={cameraControl} />
-              </IconButton>
-            ) : (
-              <IconButton size="medium">
-                <VideocamOffIcon fontSize="medium" onClick={cameraControl} />
-              </IconButton>
-            )}
-            <IconButton size="medium">
-              <CallIcon fontSize="inherit" onClick={userLeft} />
-            </IconButton>
-            <IconButton size="medium">
-              <ChatIcon fontSize="inherit" onClick={chatHandle}></ChatIcon>
-            </IconButton>
-          </Grid>
-        </div>
-      </div>
-      {/* <div> */}
-      {/* <StyledVideo ref={userVideo} autoPlay playsInline /> */}
-      {/* </div> */}
-      {/* <CodeEditor /> */}
-      {socketRef.current !== undefined && roomID !== undefined ? (
-        <SocketChat
-          chatToggle={chatToggle}
-          chatHandle={chatHandle}
-          socketRef={socketRef}
-          roomID={roomID}
-        />
+    <div>
+      <CodeEditor props={props} />
+      {!fullscreen ? (
+        <IconButton
+          size="large"
+          className="small-screen"
+          sx={{ color: "white" }}
+        >
+          <FullscreenIcon
+            variant="filled"
+            fontSize="large"
+            onClick={() => setFullScreen(!fullscreen)}
+          />
+          <PictureInPicture
+            variant="filled"
+            fontSize="large"
+            onClick={pipHandle}
+          ></PictureInPicture>
+        </IconButton>
       ) : (
-        <p></p>
+        <IconButton
+          size="large"
+          className="large-screen"
+          sx={{ color: "white" }}
+        >
+          <CloseFullscreenOutlined
+            variant="filled"
+            fontSize="large"
+            onClick={() => setFullScreen(!fullscreen)}
+          />
+
+          <PictureInPicture
+            variant="filled"
+            fontSize="large"
+            onClick={pipHandle}
+          ></PictureInPicture>
+        </IconButton>
       )}
-      {/* </Container> */}
+      <div className="video-components">
+        {/* <Container> */}
+        {/* <Grid container> */}
+        {/* <div className="main"> */}
+        {/* <div className="user-video"> */}
+        <div className="bottom">
+          <video
+            className={
+              videoBool
+                ? share
+                  ? "peer-video"
+                  : "flip peer-video"
+                : share
+                ? fullscreen
+                  ? "user-video full-screen"
+                  : "user-video"
+                : fullscreen
+                ? "flip user-video full-screen"
+                : "flip user-video"
+            }
+            ref={userVideo}
+            autoPlay
+            playsInline
+          />
+          {peers.map((peer) => {
+            return (
+              <Video
+                className={
+                  videoBool
+                    ? fullscreen
+                      ? "user-video full-screen"
+                      : "user-video"
+                    : "peer-video"
+                }
+                key={peer.peerID}
+                peer={peer.peer}
+              />
+            );
+          })}
+          <div className="video-buttons">
+            <Grid container spacing={1}>
+              <IconButton size="medium">
+                <Button variant="outlined" onClick={shareScreen}>
+                  {!share ? "Share Screen" : "Sharing"}
+                </Button>
+              </IconButton>
+              {mic ? (
+                <IconButton size="medium">
+                  <MicIcon fontSize="medium" onClick={micControl} />
+                </IconButton>
+              ) : (
+                <IconButton size="medium">
+                  <MicOffIcon fontSize="medium" onClick={micControl} />
+                </IconButton>
+              )}
+              {camera ? (
+                <IconButton size="medium">
+                  <VideocamIcon fontSize="medium" onClick={cameraControl} />
+                </IconButton>
+              ) : (
+                <IconButton size="medium">
+                  <VideocamOffIcon fontSize="medium" onClick={cameraControl} />
+                </IconButton>
+              )}
+              <IconButton size="medium">
+                <CallIcon fontSize="inherit" onClick={userLeft} />
+              </IconButton>
+              <IconButton size="medium">
+                <ChatIcon fontSize="inherit" onClick={chatHandle}></ChatIcon>
+              </IconButton>
+            </Grid>
+          </div>
+          {/* <Button className="test" onClick={() => setVideoBool(!videoBool)}>
+            Press Me
+          </Button> */}
+        </div>
+        {/* <div> */}
+        {/* <StyledVideo ref={userVideo} autoPlay playsInline /> */}
+        {/* </div> */}
+        {socketRef.current !== undefined && roomID !== undefined ? (
+          <SocketChat
+            chatToggle={chatToggle}
+            chatHandle={chatHandle}
+            socketRef={socketRef}
+            roomID={roomID}
+          />
+        ) : (
+          <p></p>
+        )}
+        {/* </Container> */}
+      </div>
     </div>
   );
 };

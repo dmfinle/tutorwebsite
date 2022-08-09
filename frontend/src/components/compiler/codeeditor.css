@@ -1,7 +1,7 @@
 #editor {
   position: fixed;
-  left: 0;
-  top: 70px;
+  left: 3%;
+  top: 9%;
 }
 
 #theme {
@@ -15,13 +15,30 @@
 
 .stdout {
   background: #cccccc52;
-  width: 50%;
-  height: 100%;
+  width: 47%;
+  height: 20%;
   position: fixed;
-  top: 40.6%;
+  top: 80%;
   font-size: 18px;
   right: 0;
   resize: none;
+  overflow: scroll;
+}
+
+.stdout p {
+  position: fixed;
+  top: 90%;
+  font-size: 18px;
+  left: 3%;
+  resize: none;
+}
+
+.toggle-hidden {
+  visibility: hidden;
+}
+
+.toggle-show {
+  visibility: visible;
 }
 
 #stdin {
@@ -29,7 +46,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 45.6%;
+  width: 49.5%;
   height: 17vh;
   resize: vertical;
   font-size: 17px;

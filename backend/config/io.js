@@ -11,7 +11,17 @@ const socketConnect = async (server) => {
   const socketToRoom = {};
 
   let userMessages = [];
+  let editorUser = [];
+  let editorInfo = {};
 
+  const editorAddUser = (socketID, roomID) => {
+    !editorUser.some((user) => user.socketID === socketID) &&
+      editorUser.push({ socketID, roomID });
+  };
+
+  const editorRemoveUser = (socketId) => {
+    editorUser = editorUser.filter((user) => user.socketID !== socketId);
+  };
   const addUser = (userId, socketId) => {
     !userMessages.some((user) => user.userId === userId) &&
       userMessages.push({ userId, socketId });
@@ -27,7 +37,33 @@ const socketConnect = async (server) => {
 
   const videoChat = io.of("/video-chat");
   const messageChat = io.of("/message-chat");
+  const editor = io.of("/editor");
 
+  //Code editor live changes
+  editor.on("connection", (socket) => {
+    socket.on("addUser", (roomID) => {
+      console.log("editor connected");
+      editorAddUser(socket.id, roomID);
+      console.log(editorUser);
+      editor.emit("allUsers", editorInfo);
+    });
+    socket.on("sendMessage", ({ info }) => {
+      console.log("sending message");
+      const receiver = editorUser.filter((user) => user.socketID !== socket.id);
+      console.log(info);
+      editorInfo = info;
+      console.log("------------");
+      // setTimeout(function () {
+      editor.to(receiver[0]?.socketID).emit("allUsers", info);
+      // }, 1000);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("editor user left");
+      editorRemoveUser(socket.id);
+      // editor.emit("getUsers", editorUser);
+    });
+  });
   //Instant message io
   messageChat.on("connection", (socket) => {
     console.log("a user joined");
