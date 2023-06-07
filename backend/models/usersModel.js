@@ -1,35 +1,51 @@
-"use strict";
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const userSchema = mongoose.Schema(
-  {
-    firstName: String,
-    lastName: String,
-    userName: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    isAdmin: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
+const UserSchema = new Schema({
+  firstName: {
+    type: String,
+    required: true,
   },
-  {
-    timestamps: true,
-  }
-);
+  lastName: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  confirmed: {
+    type: Boolean,
+    default: false,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  hasProfile: {
+    type: Boolean,
+    default: false,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  profilePicture: {
+    type: String,
+    default: "",
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-const User = mongoose.model("User", userSchema);
+UserSchema.virtual("fullName").get(function () {
+  return this.firstName + " " + this.lastName;
+});
 
-export default User;
+module.exports = mongoose.model("users", UserSchema);
